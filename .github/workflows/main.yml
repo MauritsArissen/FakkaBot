@@ -1,4 +1,4 @@
-name: CI/CD API
+name: CI/CD Bot
 
 on:
   push:
