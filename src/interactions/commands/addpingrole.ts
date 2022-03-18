@@ -43,6 +43,9 @@ export default {
     },
   ],
   async execute(interaction: CommandInteraction) {
+    if (true) {
+      console.log("kappa");
+    }
     const pingRoleModel: Models.PingRole = Container.get("pingRoleModel");
 
     const dto: IPingRole = {
