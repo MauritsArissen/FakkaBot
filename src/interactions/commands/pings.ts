@@ -23,13 +23,12 @@ export default {
     const list = await pingRoleModel.findAll();
 
     const optionList = list.map((x) => {
-      const option = {
+      return {
         label: x.label,
         description: x.description,
         value: x.value,
         emoji: x.emoji,
       };
-      return option;
     });
 
     const row = new MessageActionRow().addComponents(

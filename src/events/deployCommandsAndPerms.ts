@@ -1,6 +1,5 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
-import { Guild } from "discord.js";
 import { Bot } from "../client";
 import config from "../config";
 
@@ -8,7 +7,7 @@ export default {
   name: "ready",
   once: true,
   async execute(client: Bot) {
-    var commands = [];
+    const commands = [];
 
     client.commands.each((cmd) => commands.push(cmd.data.toJSON()));
 

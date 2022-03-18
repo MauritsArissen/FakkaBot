@@ -12,20 +12,24 @@ export default {
       "954094322024853557"
     );
 
-    if (pingSepRole && interaction.values.length > 0) {
-      if (!member.roles.cache.has(pingSepRole.id))
-        member.roles.add(pingSepRole);
-    } else if (pingSepRole) {
-      if (member.roles.cache.has(pingSepRole.id))
-        member.roles.remove(pingSepRole);
+    if (pingSepRole) {
+      if (interaction.values.length > 0) {
+        if (!member.roles.cache.has(pingSepRole.id))
+          member.roles.add(pingSepRole);
+      } else {
+        if (member.roles.cache.has(pingSepRole.id))
+          member.roles.remove(pingSepRole);
+      }
     }
 
     list.forEach(async (item) => {
       const role = await interaction.guild.roles.fetch(item.roleId);
-      if (role && interaction.values.includes(item.value)) {
-        if (!member.roles.cache.has(role.id)) member.roles.add(role);
-      } else if (role) {
-        if (member.roles.cache.has(role.id)) member.roles.remove(role);
+      if (role) {
+        if (interaction.values.includes(item.value)) {
+          if (!member.roles.cache.has(role.id)) member.roles.add(role);
+        } else {
+          if (member.roles.cache.has(role.id)) member.roles.remove(role);
+        }
       }
     });
 
