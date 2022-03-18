@@ -1,7 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import Container from "typedi";
+import config from "../../config";
 import { IPingRole } from "../../interfaces/IPingRole";
+import PingsUtil from "../../util/PingsUtil";
 
 export default {
   data: new SlashCommandBuilder()
@@ -13,12 +15,6 @@ export default {
         .setName("label")
         .setRequired(true)
         .setDescription("Label as shown in scroll list")
-    )
-    .addStringOption((options) =>
-      options
-        .setName("value")
-        .setRequired(true)
-        .setDescription("Backend value for display")
     )
     .addStringOption((options) =>
       options
@@ -37,8 +33,8 @@ export default {
     ),
   permissions: [
     {
-      id: "244909794836611082",
-      type: "USER",
+      id: config.botModRoleId,
+      type: "ROLE",
       permission: true,
     },
   ],
@@ -47,7 +43,7 @@ export default {
 
     const dto: IPingRole = {
       label: interaction.options.getString("label"),
-      value: interaction.options.getString("value"),
+      value: interaction.options.getString("label").replace(/\s+/g, ""),
       description: interaction.options.getString("description"),
       emoji: interaction.options.getString("emoji"),
       roleId: interaction.options.getRole("role").id,
@@ -56,8 +52,10 @@ export default {
     pingRoleModel.create(dto);
 
     interaction.reply({
-      content: "🟩 Ping role was added!",
+      content: "Ping role was added!",
       ephemeral: true,
     });
+
+    PingsUtil.updateMessage(interaction.guild);
   },
 };

@@ -5,6 +5,8 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import Container from "typedi";
+import config from "../../config";
+import PingsUtil from "../../util/PingsUtil";
 
 export default {
   data: new SlashCommandBuilder()
@@ -13,38 +15,35 @@ export default {
     .setDefaultPermission(false),
   permissions: [
     {
-      id: "244909794836611082",
-      type: "USER",
+      id: config.botModRoleId,
+      type: "ROLE",
       permission: true,
     },
   ],
   async execute(interaction: CommandInteraction) {
-    const pingRoleModel: Models.PingRole = Container.get("pingRoleModel");
-    const list = await pingRoleModel.findAll();
-
-    const optionList = list.map((x) => {
-      return {
-        label: x.label,
-        description: x.description,
-        value: x.value,
-        emoji: x.emoji,
-      };
-    });
-
-    const row = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
-        .setCustomId("pingsSelect")
-        .setPlaceholder("Nothing selected")
-        .setMinValues(0)
-        .setMaxValues(optionList.length)
-        .addOptions(optionList)
-    );
-
     await interaction.reply({ content: "Placed", ephemeral: true });
-    await interaction.channel.send({
+    const reply = await interaction.channel.send({
       content:
         "`🔔` **Selecteer ping roles**\n\nOpen de select box en selecteer de games waarvan je pings wil ontvangen. Je kan er meerdere selecteren.",
-      components: [row],
+      components: [await PingsUtil.pingSelectMenuRow()],
+    });
+
+    const configModel: Models.Config = Container.get("configModel");
+    [
+      ["Channel", reply.channelId],
+      ["Message", reply.id],
+    ].forEach(async (x) => {
+      let configRecord = await configModel.findOne({
+        where: { key: `rolePings${x[0]}Id` },
+      });
+      if (!configRecord) {
+        await configModel.create({ key: `rolePings${x[0]}Id`, value: x[1] });
+      } else {
+        await configModel.update(
+          { value: x[1] },
+          { where: { key: `rolePings${x[0]}Id` } }
+        );
+      }
     });
   },
 };
