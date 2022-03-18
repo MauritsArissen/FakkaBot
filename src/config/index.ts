@@ -11,4 +11,5 @@ export default {
   clientId: process.env.CLIENTID,
   guildId: process.env.GUILDID,
   databaseUrl: process.env.DB_URL,
+  botModRoleId: "924330150441672714",
 };
