@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, AttachmentBuilder, PresenceManager } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, AttachmentBuilder } from "discord.js";
 import { Rank } from "canvacord";
 import LevelHelper from "../../util/LevelHelper";
 import UserStats from "../../models/UserStats.model";
@@ -22,24 +22,25 @@ export default {
         
         const usr = interaction.options.getUser("user") || interaction.user;
 
-        const us: [UserStats, boolean] = await UserStats.findOrCreate({
-            where: { uid: usr.id },
-            defaults: { xp: 0 }
-        });
+        const us: UserStats = await UserStats.findOne({ where: { uid: usr.id }});
+        if (!us) return interaction.reply({
+            content: "This user does not have a profile",
+            ephemeral: true
+        })
 
         const rank = new Rank()
             .setUsername(usr.username)
             .setDiscriminator(usr.discriminator)
-            .setLevel(LevelHelper.getLvl(us[0]))
-            .setCurrentXP(LevelHelper.getCurrentXp(us[0]))
-            .setRequiredXP(LevelHelper.getRequiredXp(us[0]))
-            .setRank(await LevelHelper.getRank(us[0]))
+            .setLevel(LevelHelper.getLvl(us))
+            .setCurrentXP(LevelHelper.getCurrentXp(us))
+            .setRequiredXP(LevelHelper.getRequiredXp(us))
+            .setRank(await LevelHelper.getRank(us))
             .setOverlay("#333640", 0.2, true)
             .setStatus("offline")
             .setBackground("IMAGE", "https://img.freepik.com/vector-gratis/diseno-banner-fondo-profesional-negocios-abstracto-multiproposito_1340-16856.jpg")
             .setAvatar(usr.avatarURL({ extension: "png" }));
 
-        let attachment = new AttachmentBuilder(await rank.build(), { name: "rank-card.png" });
+        const attachment = new AttachmentBuilder(await rank.build(), { name: "rank-card.png" });
         
         interaction.reply({
             files: [attachment]

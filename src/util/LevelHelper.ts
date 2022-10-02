@@ -19,7 +19,7 @@ class LevelHelper {
     }
 
     static getRank = async (us:UserStats) => {
-        let rows = await UserStats.findAll({
+        const rows = await UserStats.findAll({
             order: [
                 ["xp", "DESC"]
             ]
@@ -44,18 +44,23 @@ class LevelHelper {
     }
 
     static getCurrentXp = (us:UserStats) => {
-        let lvl = this.getLvl(us) - 1;
+        const lvl = this.getLvl(us) - 1;
         return us.xp - this.getAllXp(lvl);
     }
 
     static getRequiredXp = (us:UserStats) => {
-        let lvl = this.getLvl(us);
+        const lvl = this.getLvl(us);
         return this.formula(lvl);
     }
 
-    static addXp = (us:UserStats, xp:number, cooldown:number): boolean => {
+    static addXp = async (uid:string, xp:number, cooldown:number): Promise<boolean> => {
+        const us: UserStats = (await UserStats.findOrCreate({
+            where: { uid: uid },
+            defaults: { xp: 0 }
+        }))[0];
+        
         if (!this.client.xpCooldown.has(us.uid) || this.client.xpCooldown.get(us.uid) > Date.now()) {
-            let lvl = this.getLvl(us);
+            const lvl = this.getLvl(us);
             us.xp += xp;
             us.save();
             this.client.xpCooldown.set(us.uid, Date.now() + (cooldown * 1000));

@@ -15,6 +15,7 @@ class Bot extends Client {
         IntentsBitField.Flags.DirectMessages,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildVoiceStates
       ],
     });
   }
