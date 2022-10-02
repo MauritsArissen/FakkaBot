@@ -1,6 +1,6 @@
 import { ButtonInteraction } from "discord.js";
 import Container from "typedi";
-import { Bot } from "../../client";
+import { Bot } from "../client";
 
 export default {
   name: "interactionCreate",
