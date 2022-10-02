@@ -13,6 +13,6 @@ export default {
         const members = await guild.members.cache.filter(member => member.voice.channel != null && member.voice.channelId != guild.afkChannelId);
         members.forEach(m => LevelHelper.addXp(m.id, Math.round(Math.random()*15+15), 2 * 60 * 1000));
     });
-    setTimeout(() => this.loop(client), 2 * 60 * 1000);
+    setTimeout(() => this.loop(client), 10 * 1000);
   }
 };
