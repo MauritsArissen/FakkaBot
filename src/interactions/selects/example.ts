@@ -1,4 +1,4 @@
-import { ButtonInteraction, SelectMenuInteraction } from "discord.js";
+import { SelectMenuInteraction } from "discord.js";
 
 export default {
   customId: "exampleSelect",
