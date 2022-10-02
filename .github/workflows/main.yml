@@ -9,17 +9,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Push to server
-        uses: appleboy/scp-action@master
-        env:
+      - name: Pull FakkaBot@latest on server
+        uses: appleboy/ssh-action@master
+        with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
           PORT: ${{ secrets.PORT }}
-        with:
-          source: "."
-          target: ${{ secrets.PROJECT_PATH }}
+          script: |
+            cd ${{ secrets.PROJECT_PATH }}
+            git pull
 
       - name: Download dependencies
         uses: appleboy/ssh-action@master
