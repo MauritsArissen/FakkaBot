@@ -1,5 +1,4 @@
-import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
+import { REST, Routes } from "discord.js";
 import { Bot } from "../client";
 import config from "../config";
 
@@ -11,28 +10,47 @@ export default {
 
     client.commands.each((cmd) => commands.push(cmd.data.toJSON()));
 
-    const rest = new REST({ version: "9" }).setToken(config.token);
+    const rest = new REST({ version: "10" }).setToken(config.token);
 
-    const guilds = await client.guilds.fetch();
-    guilds.forEach(async (guild) => {
-      await rest
-        .put(Routes.applicationGuildCommands(client.user.id, guild.id), {
-          body: commands,
-        })
-        .then(() =>
-          client.logger.info(
-            `\tSuccesfully registered application commands for ${guild.name}`
-          )
-        )
-        .catch(client.logger.error);
+    switch (process.env.NODE_ENV) {
 
-      const guildCommands = await (await guild.fetch()).commands.fetch();
-      guildCommands.forEach(async (cmd) => {
-        if (!client.commands.get(cmd.name).permissions) return;
-        await cmd.permissions.set({
-          permissions: client.commands.get(cmd.name).permissions,
+      case "production": { // Register all commands globally.
+
+        client.logger.info(`Started refreshing ${commands.length} application (/) commands [GLOBALLY]`);
+
+        const data: any = await rest.put(
+          Routes.applicationCommands(client.user.id),
+          { body: commands },
+        );
+
+        client.logger.info(`Successfully reloaded ${data.length} application (/) commands [GLOBALLY]`);
+
+      }
+
+      default: { // Register all commands for each individual guild the bot is in.
+
+        const guilds = await client.guilds.fetch();
+        guilds.forEach(async (guild) => {
+    
+          try {
+            client.logger.info(`Started refreshing ${commands.length} application (/) commands for ${guild.name}.`);
+
+            const data: any = await rest.put(
+              Routes.applicationGuildCommands(client.user.id, guild.id),
+              { body: commands },
+            );
+
+            client.logger.info(`Successfully reloaded ${data.length} application (/) commands for ${guild.name}`);
+          } catch (error) {
+            client.logger.error(`Failed to reload application (/) commands for ${guild.name}\n\n${error}\n`);
+          }
+
         });
-      });
-    });
+
+      }
+
+    }
+
+    
   },
 };
