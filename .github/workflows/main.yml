@@ -18,7 +18,7 @@ jobs:
           PORT: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
-            git checkout .
+            git reset --hard HEAD
             git pull
 
       - name: Download dependencies
