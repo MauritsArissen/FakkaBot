@@ -1,5 +1,5 @@
-import PingRole from "../models/PingRole.model";
+import UserStats from "../models/UserStats.model";
 
 export default {
-  pingRole: PingRole,
+  userStats: UserStats,
 };
