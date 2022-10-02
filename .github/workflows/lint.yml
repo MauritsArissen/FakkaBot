@@ -6,6 +6,9 @@ on:
       - master
       - development
       - 'feature/**'
+  push:
+    branches:
+      - 'feature/**'
 
 jobs:
   build:
