@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download dependencies
+      - name: Pull FakkaBot@latest on server
         uses: appleboy/ssh-action@master
         with:
           HOST: ${{ secrets.HOST }}
