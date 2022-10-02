@@ -7,6 +7,7 @@ class Bot extends Client {
   public commands: Collection<string, any> = new Collection();
   public buttons: Collection<string, any> = new Collection();
   public selects: Collection<string, any> = new Collection();
+  public xpCooldown: Collection<string, number> = new Collection();
   public constructor() {
     super({
       intents: [
