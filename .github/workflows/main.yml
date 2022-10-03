@@ -2,7 +2,7 @@ name: CI/CD Bot
 
 on:
   push:
-    branches: [master]
+    branches: [master] 
 
 jobs:
   deploy-bot:
