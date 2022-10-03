@@ -20,7 +20,7 @@ jobs:
             cd ${{ secrets.PROJECT_PATH }}
             git reset --hard HEAD
             git pull
-
+ 
       - name: Download dependencies
         uses: appleboy/ssh-action@master
         with:
