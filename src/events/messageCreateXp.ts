@@ -9,6 +9,6 @@ export default {
     async execute(message: Message) {
         if (message.author.bot) return;
         const client: Bot = Container.get("client");
-        if (!client.xpCooldown.has(message.author.id)) LevelHelper.addXp(message.author.id, Math.round(Math.random()*10+15), 60);
+        if (!client.xpCooldown.has(message.author.id) || client.xpCooldown.get(message.author.id) < Date.now()) LevelHelper.addXp(message.author.id, Math.round(Math.random()*10+15), 60);
     }
 }
