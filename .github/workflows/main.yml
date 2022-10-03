@@ -2,7 +2,7 @@ name: CI/CD Bot
 
 on:
   push:
-    branches: [master]
+    branches: [master] 
 
 jobs:
   deploy-bot:
@@ -14,19 +14,19 @@ jobs:
         with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          KEY: ${{ secrets.KEY }}
           PORT: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
             git reset --hard HEAD
             git pull
-
+ 
       - name: Download dependencies
         uses: appleboy/ssh-action@master
         with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          KEY: ${{ secrets.KEY }}
           PORT: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
@@ -37,7 +37,7 @@ jobs:
         with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          KEY: ${{ secrets.KEY }}
           PORT: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
@@ -48,7 +48,7 @@ jobs:
         with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          KEY: ${{ secrets.KEY }}
           PORT: ${{ secrets.PORT }}
           script: |
             pm2 restart fakkabot
