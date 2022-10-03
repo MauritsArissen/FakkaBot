@@ -59,7 +59,7 @@ class LevelHelper {
             defaults: { xp: 0 }
         }))[0];
         
-        if (!this.client.xpCooldown.has(us.uid) || this.client.xpCooldown.get(us.uid) > Date.now()) {
+        if (!this.client.xpCooldown.has(us.uid) || this.client.xpCooldown.get(us.uid) < Date.now()) {
             const lvl = this.getLvl(us);
             us.xp += xp;
             us.save();
