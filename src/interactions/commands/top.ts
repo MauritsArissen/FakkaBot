@@ -1,4 +1,4 @@
-import { ActionRowBuilder, APISelectMenuOption, CommandInteraction, SelectMenuBuilder, SelectMenuOptionBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, CommandInteraction, SelectMenuBuilder, SelectMenuOptionBuilder, SlashCommandBuilder } from "discord.js";
 import LevelHelper from "../../util/LevelHelper";
 import UserStats from "../../models/UserStats.model";
 
