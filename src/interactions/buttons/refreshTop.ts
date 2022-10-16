@@ -40,6 +40,6 @@ export default {
         components: [row, row2]
     });
 
-    setTimeout(() => interaction.deferUpdate(), 10000);
+    setTimeout(() => interaction.deferUpdate(), 2000);
   },
 };
