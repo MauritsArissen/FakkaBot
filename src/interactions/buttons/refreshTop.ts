@@ -8,7 +8,7 @@ export default {
   async execute(interaction: ButtonInteraction) {
     const msg = await interaction.channel.messages.fetch(interaction.message);
     
-    const stats: UserStats[] = await UserStats.findAll({ order: [['xp', 'DESC']], limit: 40 });
+    const stats: UserStats[] = await UserStats.findAll({ order: [['xp', 'DESC']], limit: 25 });
     const users = await interaction.guild.members.fetch({ user: stats.map(x => x.uid)});
 
     const selectMenu = new SelectMenuBuilder()
@@ -17,7 +17,7 @@ export default {
 
     for (let i = 0; i < stats.length; i++) {
         selectMenu.addOptions(new SelectMenuOptionBuilder()
-            .setLabel(`${users.get(stats[i].uid).displayName}`)
+            .setLabel(`${users.get(stats[i].uid) != null ? users.get(stats[i].uid).displayName : "*User left*"}`)
             .setDescription(`Level: ${LevelHelper.getLvl(stats[i])} | Xp: ${LevelHelper.getCurrentXp(stats[i])}/${LevelHelper.getRequiredXp(stats[i])} | Total xp: ${stats[i].xp}`)
             .setValue(`${stats[i].uid}`)
             .setEmoji({ id: emojis[`${i+1}`] })
