@@ -43,6 +43,16 @@ jobs:
             cd ${{ secrets.PROJECT_PATH }}
             npm run build
 
+      - name: Flush logs
+        uses: appleboy/ssh-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.KEY }}
+          PORT: ${{ secrets.PORT }}
+          script: |
+            pm2 flush fakkabot
+
       - name: Restart session
         uses: appleboy/ssh-action@master
         with:
