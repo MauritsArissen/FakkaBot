@@ -10,7 +10,8 @@ jobs:
     name: Await Approval
     runs-on: ubuntu-latest
     steps:
-      - uses: trstringer/manual-approval@v1
+      - name: Manual Workflow Approval
+        uses: trstringer/manual-approval@v1.8.0
         with:
           secret: ${{ github.TOKEN }}
           approvers: MauritsArissen
