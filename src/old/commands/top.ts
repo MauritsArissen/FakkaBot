@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, SelectMenuBuilder, SelectMenuOptionBuilder, SlashCommandBuilder } from "discord.js";
 import LevelHelper from "../../util/LevelHelper";
-import UserStats from "../../models/UserStats.model";
+import UserStats from "../../entities/models/UserStats.model";
 import emojis from "../../config/emojis";
 
 export default {

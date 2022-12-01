@@ -1,6 +1,6 @@
 import Container from "typedi";
 import { Bot } from "../client";
-import UserStats from "../models/UserStats.model"
+import UserStats from "../entities/models/UserStats.model"
 
 class LevelHelper {
 

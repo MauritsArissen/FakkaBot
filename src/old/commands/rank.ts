@@ -1,7 +1,7 @@
 import { CommandInteraction, SlashCommandBuilder, AttachmentBuilder } from "discord.js";
 import { Rank } from "canvacord";
 import LevelHelper from "../../util/LevelHelper";
-import UserStats from "../../models/UserStats.model";
+import UserStats from "../../entities/models/UserStats.model";
 
 export default {
     data: new SlashCommandBuilder()

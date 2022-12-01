@@ -1,6 +1,6 @@
 import { Model } from "sequelize-typescript";
 import { BuildOptions } from "sequelize/types";
-import { UserStatsModel } from "../models/UserStats.model";
+import { UserStatsModel } from "../entities/models/UserStats.model";
 
 declare global {
   namespace Models {

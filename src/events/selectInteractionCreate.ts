@@ -10,7 +10,7 @@ export default {
 
     const client: Bot = Container.get("client");
 
-    const select = client.selects.get(interaction.customId);
+    const select = client.selectMenus.get(interaction.customId);
 
     if (!select) return;
 
