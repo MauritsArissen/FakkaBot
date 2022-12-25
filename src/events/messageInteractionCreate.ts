@@ -18,10 +18,11 @@ export default {
 
     try {
       Logger.log(
-        `${
-          interaction.user.username + "#" + interaction.user.discriminator
-        } used command ${yellow("/" + interaction.commandName)}`,
-        "COMMAND"
+        `${interaction.user.tag} used command ${yellow(
+          "/" + interaction.commandName
+        )}`,
+        "COMMAND",
+        JSON.stringify(interaction.options)
       );
       await command.execute(interaction);
     } catch (err) {

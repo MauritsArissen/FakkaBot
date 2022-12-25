@@ -22,4 +22,7 @@ export default async ({ client }: { client: Bot }) => {
 
   await eventsLoader({ client });
   Logger.info("Events loaded");
+
+  // Start database logging
+  Logger.startSavingLogs();
 };
