@@ -1,6 +1,7 @@
 import { Model, Sequelize } from "sequelize-typescript";
 import Container from "typedi";
 import { Bot } from "../client";
+import Logger from "../util/Logger";
 
 export default ({
   client,
@@ -21,7 +22,7 @@ export default ({
 
     return;
   } catch (err) {
-    client.logger.error("Error on dependency injector loader: %o", err);
+    Logger.error("Error on dependency injector loader: %o", err);
     throw err;
   }
 };

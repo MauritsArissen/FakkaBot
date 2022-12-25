@@ -1,6 +1,8 @@
+import { red, yellow } from "colorette";
 import { SelectMenuInteraction } from "discord.js";
 import Container from "typedi";
 import { Bot } from "../client";
+import Logger from "../util/Logger";
 
 export default {
   name: "interactionCreate",
@@ -15,9 +17,22 @@ export default {
     if (!select) return;
 
     try {
+      Logger.log(
+        `${
+          interaction.user.username + "#" + interaction.user.discriminator
+        } interacted with select box ${yellow(interaction.customId)}`,
+        "SELECT"
+      );
       await select.execute(interaction);
     } catch (err) {
-      client.logger.error(err);
+      Logger.error(
+        red(
+          `There was an error whilst interacting with select box ${
+            interaction.customId
+          } ${yellow("Interactor: " + interaction.user.username)}`
+        ),
+        err
+      );
       await interaction.reply({
         content: "There was an error while processing this select command!",
         ephemeral: true,
