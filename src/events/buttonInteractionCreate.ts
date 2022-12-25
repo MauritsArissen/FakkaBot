@@ -1,6 +1,8 @@
+import { red, yellow } from "colorette";
 import { ButtonInteraction } from "discord.js";
 import Container from "typedi";
 import { Bot } from "../client";
+import Logger from "../util/Logger";
 
 export default {
   name: "interactionCreate",
@@ -15,9 +17,22 @@ export default {
     if (!button) return;
 
     try {
+      Logger.log(
+        `${
+          interaction.user.username + "#" + interaction.user.discriminator
+        } interacted with button ${yellow(interaction.customId)}`,
+        "BUTTON"
+      );
       await button.execute(interaction);
     } catch (err) {
-      client.logger.error(err);
+      Logger.error(
+        red(
+          `There was an error whilst interacting with button ${
+            interaction.customId
+          } ${yellow("Interactor: " + interaction.user.username)}`
+        ),
+        err
+      );
       await interaction.reply({
         content: "There was an error while processing this button command!",
         ephemeral: true,
