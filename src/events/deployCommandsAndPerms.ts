@@ -1,11 +1,20 @@
+import { yellow } from "colorette";
 import { REST, Routes } from "discord.js";
 import { Bot } from "../client";
 import config from "../config";
+import IEvent from "../entities/interfaces/IEvent";
+import Logger from "../util/Logger";
 
-export default {
-  name: "ready",
-  once: true,
-  async execute(client: Bot) {
+class DeployCommandsEvent implements IEvent {
+  getEventType(): string {
+    return "ready";
+  }
+
+  getEventOccurance(): boolean {
+    return true;
+  }
+
+  async execute(client: Bot): Promise<void> {
     const commands = [];
 
     client.commands.each((cmd) =>
@@ -16,7 +25,7 @@ export default {
 
     if (process.env.NODE_ENV == "production") {
       // Register all commands globally.
-      client.logger.info(
+      Logger.info(
         `Started refreshing ${commands.length} application (/) commands [GLOBALLY]`
       );
 
@@ -25,7 +34,7 @@ export default {
         { body: commands }
       );
 
-      client.logger.info(
+      Logger.info(
         `Successfully reloaded ${data.length} application (/) commands [GLOBALLY]`
       );
     } else {
@@ -33,24 +42,27 @@ export default {
       const guilds = await client.guilds.fetch();
       guilds.forEach(async (guild) => {
         try {
-          client.logger.info(
-            `Started refreshing ${commands.length} application (/) commands for ${guild.name}.`
-          );
-
           const data: any = await rest.put(
             Routes.applicationGuildCommands(client.user.id, guild.id),
             { body: commands }
           );
 
-          client.logger.info(
-            `Successfully reloaded ${data.length} application (/) commands for ${guild.name}`
+          Logger.info(
+            `Successfully reloaded ${
+              data.length
+            } application (/) commands for ${yellow(guild.name)}`
           );
         } catch (error) {
-          client.logger.error(
-            `Failed to reload application (/) commands for ${guild.name}\n\n${error}\n`
+          Logger.error(
+            `Failed to reload application (/) commands for ${yellow(
+              guild.name
+            )}`,
+            error
           );
         }
       });
     }
-  },
-};
+  }
+}
+
+export default DeployCommandsEvent;

@@ -1,6 +1,7 @@
 import { ButtonInteraction } from "discord.js";
 import Container from "typedi";
-import { Bot } from "../client";
+import { Bot } from "../../client";
+import Logger from "../../util/Logger";
 
 export default {
   name: "interactionCreate",
@@ -17,7 +18,7 @@ export default {
     try {
       await button.execute(interaction);
     } catch (err) {
-      client.logger.error(err);
+      Logger.error(err);
       await interaction.reply({
         content: "There was an error while processing this button command!",
         ephemeral: true,

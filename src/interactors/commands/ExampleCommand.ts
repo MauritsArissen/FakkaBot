@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import Container, { Inject, Service } from "typedi";
+import { Inject, Service } from "typedi";
 import HelpDescription from "../../entities/HelpDescription";
 import ICommand from "../../entities/interfaces/ICommand";
 

@@ -4,6 +4,7 @@ import IButton from "../entities/interfaces/IButton";
 import ICommand from "../entities/interfaces/ICommand";
 import ISelectMenu from "../entities/interfaces/ISelectMenu";
 import interactionsConfig from "../config/interactions";
+import Logger from "../util/Logger";
 
 class InteractorLoader {
   private client: Bot;
@@ -13,6 +14,8 @@ class InteractorLoader {
   }
 
   public load(): void {
+    Logger.info("Loading interactions...");
+
     const list = Object.keys(interactionsConfig).map((x) => x);
 
     list.forEach(async (category) => {

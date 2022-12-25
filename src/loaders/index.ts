@@ -1,25 +1,18 @@
-import { Model } from "sequelize-typescript";
 import { Bot } from "../client";
-import modelLoader from "./models";
-import eventsLoader from "./events";
-import databaseLoader from "./database";
-import dependencyInjectorLoader from "./dependencyInjector";
+import DatabaseLoader from "./DatabaseLoader";
+import DependencyInjectorLoader from "./DependencyInjectorLoader";
 import InteractorLoader from "./InteractorLoader";
+import EventLoader from "./EventLoader";
+import Logger from "../util/Logger";
+import { green } from "colorette";
+import ModelLoader from "./ModelLoader";
 
 export default async ({ client }: { client: Bot }) => {
-  const db = await databaseLoader();
-  client.logger.info("Database loaded");
-
-  const models: { name: string; model: Model }[] = modelLoader();
-  client.logger.info("Models list loaded");
-
-  await dependencyInjectorLoader({ client, db, models });
-  client.logger.info("Dependency Injector loaded");
-
-  const interactorLoader: InteractorLoader = new InteractorLoader(client);
-  interactorLoader.load();
-  client.logger.info("Interactions loaded");
-
-  await eventsLoader({ client });
-  client.logger.info("Events loaded");
+  Logger.info("STARTING APPLICATION!");
+  const db = await new DatabaseLoader().load();
+  const models = new ModelLoader().load();
+  await new DependencyInjectorLoader(client, db, models).load();
+  new InteractorLoader(client).load();
+  await new EventLoader(client).load();
+  await Logger.info(green("Successfully ran all loaders!"));
 };
