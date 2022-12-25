@@ -2,7 +2,7 @@ import { green, redBright } from "colorette";
 import moment from "moment";
 
 class Logger {
-  public static log(message: string, type: string = "LOG") {
+  public static log(message: string, type = "LOG") {
     console.log(this.date(type) + message);
   }
 
@@ -15,11 +15,11 @@ class Logger {
   }
 
   private static date(type: string): string {
-    let previewType = green(`"${type}"`);
-    let now = moment();
-    let hh = redBright(now.format("HH"));
-    let mm = redBright(now.format("mm"));
-    let ss = redBright(now.format("ss"));
+    const previewType = green(`"${type}"`);
+    const now = moment();
+    const hh = redBright(now.format("HH"));
+    const mm = redBright(now.format("mm"));
+    const ss = redBright(now.format("ss"));
     return `[${previewType} - ${hh}:${mm}:${ss}] `;
   }
 }
