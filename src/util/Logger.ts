@@ -37,7 +37,7 @@ class Logger {
     const ss = redBright(now.format("ss"));
     return `[${previewType} - ${hh}:${mm}:${ss}] `;
   }
-
+  
   private static cleanParse(message: string): string {
     let cleaning = false;
     return message
