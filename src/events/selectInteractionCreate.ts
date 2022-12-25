@@ -18,10 +18,11 @@ export default {
 
     try {
       Logger.log(
-        `${
-          interaction.user.username + "#" + interaction.user.discriminator
-        } interacted with select box ${yellow(interaction.customId)}`,
-        "SELECT"
+        `${interaction.user.tag} interacted with select box ${yellow(
+          interaction.customId
+        )}`,
+        "SELECT",
+        JSON.stringify(interaction.values)
       );
       await select.execute(interaction);
     } catch (err) {

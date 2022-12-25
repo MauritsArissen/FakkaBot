@@ -18,9 +18,9 @@ export default {
 
     try {
       Logger.log(
-        `${
-          interaction.user.username + "#" + interaction.user.discriminator
-        } interacted with button ${yellow(interaction.customId)}`,
+        `${interaction.user.tag} interacted with button ${yellow(
+          interaction.customId
+        )}`,
         "BUTTON"
       );
       await button.execute(interaction);
