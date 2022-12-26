@@ -27,6 +27,13 @@ class Logger {
 
   public static error(message: string, err?: string) {
     console.log(this.date("ERROR") + message + err != null ? `\n${err}` : "");
+    if (this._logModel != null) {
+      this._logModel.create({
+        message: this.cleanParse(message),
+        type: "ERROR",
+        payload: err,
+      });
+    }
   }
 
   private static date(type: string): string {
