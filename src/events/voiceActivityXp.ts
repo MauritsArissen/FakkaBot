@@ -22,12 +22,17 @@ export default {
       );
       members.forEach((m) => {
         const xp = Math.round(Math.random() * 10 + 20);
-        Logger.log(
-          `VoiceActivityXp check event: Adding ${yellow(
-            xp + " xp"
-          )} to ${yellow(m.user.tag)}`,
-          "EVENT"
-        );
+        if (
+          !client.xpCooldown.has(m.user.id) ||
+          client.xpCooldown.get(m.user.id) < Date.now()
+        ) {
+          Logger.log(
+            `VoiceActivityXp check event: Adding ${yellow(
+              xp + " xp"
+            )} to ${yellow(m.user.tag)}`,
+            "EVENT"
+          );
+        }
         LevelHelper.addXp(m.id, xp, 2 * 60);
       });
     });
