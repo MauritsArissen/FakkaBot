@@ -8,7 +8,5 @@ export default {
   logs: {
     level: process.env.LOGLEVEL || "silly",
   },
-  clientId: process.env.CLIENTID,
-  guildId: process.env.GUILDID,
   databaseUrl: process.env.DB_URL,
 };
