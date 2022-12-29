@@ -1,7 +1,5 @@
-import { yellow } from "colorette";
 import { Bot } from "../client";
 import LevelHelper from "../util/LevelHelper";
-import Logger from "../util/Logger";
 
 export default {
   name: "ready",
@@ -22,17 +20,6 @@ export default {
       );
       members.forEach((m) => {
         const xp = Math.round(Math.random() * 10 + 20);
-        if (
-          !client.xpCooldown.has(m.user.id) ||
-          client.xpCooldown.get(m.user.id) < Date.now()
-        ) {
-          Logger.log(
-            `VoiceActivityXp check event: Adding ${yellow(
-              xp + " xp"
-            )} to ${yellow(m.user.tag)}`,
-            "EVENT"
-          );
-        }
         LevelHelper.addXp(m.id, xp, 2 * 60);
       });
     });
