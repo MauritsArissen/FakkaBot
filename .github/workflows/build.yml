@@ -24,5 +24,8 @@ jobs:
       # Install your dependencies
       - run: npm ci
 
+      # Build the bot
+      - run: npm run build
+
       # Run ESLint
       - uses: eslint/github-action@v0
