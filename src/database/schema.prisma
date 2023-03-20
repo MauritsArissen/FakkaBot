@@ -7,14 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Logs {
-  id        Int      @id @default(autoincrement())
-  type      String?
-  message   String?
-  payload   String?
-  timestamp DateTime
-}
-
 model UserStats {
   uid String @id
   xp  Int
