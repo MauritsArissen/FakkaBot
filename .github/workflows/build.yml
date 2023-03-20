@@ -4,14 +4,15 @@ on:
   push:
     branches:
       - development
-      - 'feature/**'
+      - "feature/**"
+      - "fix/**"
+      - "bug/**"
 
 jobs:
   build:
     name: Run ESLint
     runs-on: ubuntu-latest
     steps:
-  
       # Check out the repository
       - uses: actions/checkout@v1
 
@@ -22,6 +23,9 @@ jobs:
 
       # Install your dependencies
       - run: npm ci
+
+      # Build the bot
+      - run: npm run build
 
       # Run ESLint
       - uses: eslint/github-action@v0
