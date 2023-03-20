@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --legacy-watch \"src/**\" --ext \"js,ts,json\" --exec \"ts-node --files src/bot.ts\"",
     "build": "tsc -p .",
-    "eslint:github-action": "eslint ./src"
+    "eslint:github-action": "npx prisma generate --schema=./src/database/prd.prisma & eslint ./src"
   },
   "author": "Maurits Arissen",
   "license": "ISC",
