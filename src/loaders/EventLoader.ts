@@ -1,14 +1,13 @@
 import { readdirSync } from "fs";
 import path from "path";
+import { autoInjectable } from "tsyringe";
 import { Bot } from "../client";
-import IEvent from "../entities/interfaces/IEvent";
+import IEvent from "../interfaces/IEvent";
 import Logger from "../util/Logger";
 
+@autoInjectable()
 class EventLoader {
-  private _client;
-  constructor(client: Bot) {
-    this._client = client;
-  }
+  constructor(private client?: Bot) {}
 
   public async load() {
     Logger.info("Loading events...");
@@ -22,10 +21,10 @@ class EventLoader {
       ).default();
 
       event.getEventOccurance()
-        ? this._client.once(event.getEventType(), (...args) =>
+        ? this.client.once(event.getEventType(), (...args) =>
             event.execute(...args)
           )
-        : this._client.on(event.getEventType(), (...args) =>
+        : this.client.on(event.getEventType(), (...args) =>
             event.execute(...args)
           );
     }

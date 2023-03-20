@@ -2,7 +2,7 @@ import { yellow } from "colorette";
 import { REST, Routes } from "discord.js";
 import { Bot } from "../client";
 import config from "../config";
-import IEvent from "../entities/interfaces/IEvent";
+import IEvent from "../interfaces/IEvent";
 import Logger from "../util/Logger";
 
 class DeployCommandsEvent implements IEvent {

@@ -1,28 +1,25 @@
-import Container from "typedi";
 import { Bot } from "../client";
-import IButton from "../entities/interfaces/IButton";
-import ICommand from "../entities/interfaces/ICommand";
-import ISelectMenu from "../entities/interfaces/ISelectMenu";
-import interactionsConfig from "../config/interactions";
+import IButton from "../interfaces/IButton";
+import ICommand from "../interfaces/ICommand";
+import ISelectMenu from "../interfaces/ISelectMenu";
 import Logger from "../util/Logger";
+import { autoInjectable, container } from "tsyringe";
+import dependencyInjection from "../config/dependencyInjection";
 
+@autoInjectable()
 class InteractorLoader {
-  private client: Bot;
-
-  constructor(client: Bot) {
-    this.client = client;
-  }
+  constructor(private client?: Bot) {}
 
   public load(): void {
     Logger.info("Loading interactions...");
 
-    const list = Object.keys(interactionsConfig).map((x) => x);
+    const list = Object.keys(dependencyInjection).map((x) => x);
 
     list.forEach(async (category) => {
-      const interactions = interactionsConfig[category];
+      const interactions = dependencyInjection[category];
 
       for (const x of interactions) {
-        const interaction = Container.get(x);
+        const interaction = container.resolve(x);
 
         switch (category) {
           case "commands":
@@ -40,10 +37,7 @@ class InteractorLoader {
   }
 
   private handleCommands(interaction: ICommand): void {
-    this.client.commands.set(
-      interaction.getHelpDescription().getName(),
-      interaction
-    );
+    this.client.commands.set(interaction.getName(), interaction);
   }
 
   private handleButtons(interaction: IButton): void {

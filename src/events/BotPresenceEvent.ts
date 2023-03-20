@@ -1,5 +1,5 @@
 import { Bot } from "../client";
-import IEvent from "../entities/interfaces/IEvent";
+import IEvent from "../interfaces/IEvent";
 
 class BotPresenceEvent implements IEvent {
   getEventType(): string {

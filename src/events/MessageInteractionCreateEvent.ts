@@ -1,8 +1,8 @@
 import { yellow } from "colorette";
 import { CommandInteraction } from "discord.js";
-import Container from "typedi";
+import { container } from "tsyringe";
 import { Bot } from "../client";
-import IEvent from "../entities/interfaces/IEvent";
+import IEvent from "../interfaces/IEvent";
 import Logger from "../util/Logger";
 
 class MessageInteractionCreateEvent implements IEvent {
@@ -17,7 +17,7 @@ class MessageInteractionCreateEvent implements IEvent {
   async execute(interaction: CommandInteraction): Promise<void> {
     if (!interaction.isCommand()) return;
 
-    const client: Bot = Container.get("client");
+    const client: Bot = container.resolve(Bot);
 
     const command = client.commands.get(interaction.commandName);
 
