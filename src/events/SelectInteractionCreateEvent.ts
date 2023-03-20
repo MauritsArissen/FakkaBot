@@ -1,8 +1,4 @@
-import {
-  AnySelectMenuInteraction,
-  Interaction,
-  StringSelectMenuInteraction,
-} from "discord.js";
+import { StringSelectMenuInteraction } from "discord.js";
 import { autoInjectable } from "tsyringe";
 import { Bot } from "../client";
 import IEvent from "../interfaces/IEvent";

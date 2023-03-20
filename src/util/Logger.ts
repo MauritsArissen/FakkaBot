@@ -2,7 +2,6 @@ import {
   bgBlackBright,
   bgBlue,
   bgBlueBright,
-  bgCyan,
   bgCyanBright,
   bgGreen,
   bgMagenta,

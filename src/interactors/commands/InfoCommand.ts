@@ -2,7 +2,6 @@ import axios from "axios";
 import {
   SlashCommandBuilder,
   CommandInteraction,
-  CacheType,
   EmbedBuilder,
 } from "discord.js";
 import { autoInjectable } from "tsyringe";

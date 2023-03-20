@@ -1,4 +1,4 @@
-import { ButtonInteraction, CacheType } from "discord.js";
+import { ButtonInteraction } from "discord.js";
 import { autoInjectable } from "tsyringe";
 import IButton from "../../interfaces/IButton";
 
