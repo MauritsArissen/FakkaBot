@@ -34,6 +34,18 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_PATH }}
             npm install
+            
+      # Push database changes
+      - name: Push database changes
+        uses: appleboy/ssh-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.KEY }}
+          PORT: ${{ secrets.PORT }}
+          script: |
+            cd ${{ secrets.PROJECT_PATH }}
+            npx prisma db push --schema=./src/database/prd.prisma --accept-data-loss
 
       # Push database changes
       - name: Push database changes
