@@ -1,12 +1,24 @@
+import { autoInjectable } from "tsyringe";
 import { Bot } from "../client";
+import IEvent from "../interfaces/IEvent";
 import LevelHelper from "../util/LevelHelper";
 
-export default {
-  name: "ready",
-  once: true,
-  execute(client: Bot) {
+@autoInjectable()
+class VoiceActivityEvent implements IEvent {
+  constructor(private levelHelper?: LevelHelper) {}
+
+  getEventType(): string {
+    return "ready";
+  }
+
+  getEventOccurance(): boolean {
+    return true;
+  }
+
+  async execute(client: Bot): Promise<void> {
     this.loop(client);
-  },
+  }
+
   async loop(client: Bot) {
     const guilds = await client.guilds.cache;
     guilds.forEach(async (guild) => {
@@ -18,11 +30,16 @@ export default {
           !member.voice.selfMute &&
           !member.user.bot
       );
-      members.forEach((m) => {
-        const xp = Math.round(Math.random() * 10 + 20);
-        LevelHelper.addXp(m.id, xp, 2 * 60);
-      });
+      members.forEach((m) =>
+        this.levelHelper.addXp(
+          m.id,
+          Math.round(Math.random() * 10 + 20),
+          2 * 60
+        )
+      );
     });
     setTimeout(() => this.loop(client), 10 * 1000);
-  },
-};
+  }
+}
+
+export default VoiceActivityEvent;

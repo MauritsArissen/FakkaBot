@@ -1,9 +1,14 @@
 import { Client, IntentsBitField, Collection } from "discord.js";
+import { singleton } from "tsyringe";
+import IButton from "../interfaces/IButton";
+import ICommand from "../interfaces/ICommand";
+import ISelectMenu from "../interfaces/ISelectMenu";
 
+@singleton()
 class Bot extends Client {
-  public commands: Collection<string, any> = new Collection();
-  public buttons: Collection<string, any> = new Collection();
-  public selects: Collection<string, any> = new Collection();
+  public commands: Collection<string, ICommand> = new Collection();
+  public buttons: Collection<string, IButton> = new Collection();
+  public selectMenus: Collection<string, ISelectMenu> = new Collection();
   public xpCooldown: Collection<string, number> = new Collection();
   public constructor() {
     super({

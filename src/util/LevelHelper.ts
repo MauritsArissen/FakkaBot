@@ -1,17 +1,17 @@
-import { yellow } from "colorette";
-import Container from "typedi";
+import { PrismaClient, UserStats } from "@prisma/client";
+import { autoInjectable, singleton } from "tsyringe";
 import { Bot } from "../client";
-import UserStats from "../models/UserStats.model";
-import Logger from "./Logger";
 
+@autoInjectable()
+@singleton()
 class LevelHelper {
-  private static client: Bot = Container.get("client");
+  constructor(private prisma?: PrismaClient, private client?: Bot) {}
 
-  private static formula = (lvl: number) => {
+  private formula(lvl: number): number {
     return 5 * Math.pow(lvl, 2) + 50 * lvl + 100;
-  };
+  }
 
-  private static getAllXp(lvl: number) {
+  private getAllXp(lvl: number): number {
     let xp = 0;
     for (let i = 0; i <= lvl; i++) {
       xp += this.formula(i);
@@ -19,72 +19,70 @@ class LevelHelper {
     return xp;
   }
 
-  static getRank = async (us: UserStats) => {
-    const rows = await UserStats.findAll({
-      order: [["xp", "DESC"]],
+  public async getRank(us: UserStats): Promise<number> {
+    const rows = await this.prisma.userStats.findMany({
+      orderBy: [
+        {
+          xp: "desc",
+        },
+      ],
     });
     let i = 0;
     while (rows[i].uid != us.uid) {
       i++;
     }
     return i + 1;
-  };
+  }
 
-  static getLvl = (us: UserStats) => {
+  public getLvl = (us: UserStats) => {
     let lvl = 0,
       xp = 0;
-
     while (xp < us.xp) {
       xp += this.formula(lvl);
       if (xp < us.xp) lvl++;
     }
-
     return lvl;
   };
 
-  static getCurrentXp = (us: UserStats) => {
+  public getCurrentXp(us: UserStats): number {
     const lvl = this.getLvl(us) - 1;
     return us.xp - this.getAllXp(lvl);
-  };
+  }
 
-  static getRequiredXp = (us: UserStats) => {
+  public getRequiredXp(us: UserStats): number {
     const lvl = this.getLvl(us);
     return this.formula(lvl);
-  };
+  }
 
-  static addXp = async (
+  public async addXp(
     uid: string,
-    xp: number,
+    _xp: number,
     cooldown: number
-  ): Promise<boolean> => {
-    const us: UserStats = (
-      await UserStats.findOrCreate({
-        where: { uid: uid },
-        defaults: { xp: 0 },
-      })
-    )[0];
+  ): Promise<boolean> {
+    const us: UserStats = await this.prisma.userStats.upsert({
+      where: { uid: uid },
+      create: {
+        uid: uid,
+        xp: 0,
+      },
+      update: {},
+    });
 
     if (
       !this.client.xpCooldown.has(us.uid) ||
       this.client.xpCooldown.get(us.uid) < Date.now()
     ) {
       const lvl = this.getLvl(us);
-      us.xp += xp;
-      us.save();
+      await this.prisma.userStats.update({
+        where: { uid: us.uid },
+        data: { xp: us.xp + _xp },
+      });
       this.client.xpCooldown.set(us.uid, Date.now() + cooldown * 1000);
-
-      Logger.log(
-        `LevelHelper check event: Adding ${yellow(xp + " xp")} to ${yellow(
-          us.uid
-        )}`,
-        "EVENT"
-      );
-
       return lvl < this.getLvl(us);
     } else {
       return false;
     }
-  };
+  }
 }
 
 export default LevelHelper;
