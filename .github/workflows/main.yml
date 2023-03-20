@@ -2,7 +2,7 @@ name: Deployment
 
 on:
   push:
-    branches: [master] 
+    branches: [master]
 
 jobs:
   deploy-bot:
@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # Get the latest source code on the server
       - name: Pull FakkaBot@latest on server
         uses: appleboy/ssh-action@master
@@ -23,7 +22,7 @@ jobs:
             cd ${{ secrets.PROJECT_PATH }}
             git reset --hard HEAD
             git pull
- 
+
       # Download dependencies
       - name: Download dependencies
         uses: appleboy/ssh-action@master
@@ -35,6 +34,18 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_PATH }}
             npm install
+
+      # Push database changes
+      - name: Push database changes
+        uses: appleboy/ssh-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.KEY }}
+          PORT: ${{ secrets.PORT }}
+          script: |
+            cd ${{ secrets.PROJECT_PATH }}
+            npx prisma db push --schema=./src/database/prd.prisma --accept-data-loss
 
       # Build production artifacts
       - name: Build production
