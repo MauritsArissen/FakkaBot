@@ -45,7 +45,7 @@ jobs:
           PORT: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
-            npx prisma db push --schema=./src/database/prd.prisma --accept-data-loss
+            npm run pushDatabase:prd
 
       # Build production artifacts
       - name: Build production
