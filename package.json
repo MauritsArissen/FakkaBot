@@ -4,9 +4,13 @@
   "description": "",
   "main": "src/bot.ts",
   "scripts": {
-    "dev": "nodemon --legacy-watch \"src/**\" --ext \"js,ts,json\" --exec \"ts-node --files src/bot.ts\"",
+    "start": "nodemon --legacy-watch \"src/**\" --ext \"js,ts,json\" --exec \"ts-node --files src/bot.ts\"",
     "build": "tsc -p .",
-    "eslint:github-action": "npx prisma generate --schema=./src/database/prd.prisma & eslint ./src"
+    "eslint:github-action": "eslint ./src",
+    "prisma:concat_dev": "concat -o ./src/database/runtime.prisma ./src/database/DEV.prisma ./src/database/schema.prisma",
+    "prisma:concat_prd": "concat -o ./src/database/runtime.prisma ./src/database/PRD.prisma ./src/database/schema.prisma",
+    "prisma:generate": "npx prisma generate --schema=./src/database/runtime.prisma",
+    "prisma:push": "npx prisma db push --schema=./src/database/runtime.prisma --accept-data-loss"
   },
   "author": "Maurits Arissen",
   "license": "ISC",
@@ -17,6 +21,7 @@
     "canvacord": "^5.4.8",
     "canvas": "^2.8.0",
     "colorette": "^2.0.19",
+    "concat": "^1.0.3",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
     "moment": "^2.29.4",
