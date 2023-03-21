@@ -6,9 +6,11 @@
   "scripts": {
     "start": "nodemon --legacy-watch \"src/**\" --ext \"js,ts,json\" --exec \"ts-node --files src/bot.ts\"",
     "build": "tsc -p .",
-    "eslint:github-action": "npx prisma generate --schema=./src/database/prd.prisma & eslint ./src",
-    "pushDatabase:dev": "cd src/database & concat -o runtime.prisma ./DEV.prisma ./schema.prisma & cd ../.. & npx prisma db push --schema=./src/database/runtime.prisma",
-    "pushDatabase:prd": "cd src/database & concat -o runtime.prisma ./PRD.prisma ./schema.prisma & cd ../.. & npx prisma db push --schema=./src/database/runtime.prisma --accept-data-loss"
+    "eslint:github-action": "eslint ./src",
+    "prisma:concat_dev": "concat -o ./src/database/runtime.prisma ./src/database/DEV.prisma ./src/database/schema.prisma",
+    "prisma:concat_prd": "concat -o ./src/database/runtime.prisma ./src/database/PRD.prisma ./src/database/schema.prisma",
+    "prisma:generate": "npx prisma generate --schema=./src/database/runtime.prisma",
+    "prisma:push": "npx prisma db push --schema=./src/database/runtime.prisma --accept-data-loss"
   },
   "author": "Maurits Arissen",
   "license": "ISC",
