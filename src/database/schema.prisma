@@ -6,3 +6,10 @@ model UserStats {
   uid String @id
   xp  Int
 }
+
+model Activity {
+  id        Int      @id @default(autoincrement())
+  uid       String
+  timestamp DateTime @default(now())
+  level     Int
+}

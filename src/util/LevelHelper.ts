@@ -77,6 +77,12 @@ class LevelHelper {
         where: { uid: us.uid },
         data: { xp: us.xp + _xp },
       });
+      await this.prisma.activity.create({
+        data: {
+          uid: us.uid,
+          level: Math.round(cooldown / 60),
+        },
+      });
       this.client.xpCooldown.set(us.uid, Date.now() + cooldown * 1000);
       return lvl < this.getLvl(us);
     } else {
