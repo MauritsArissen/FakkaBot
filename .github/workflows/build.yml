@@ -23,15 +23,15 @@ jobs:
 
       # Install your dependencies
       - run: npm ci
-
-      # Build the bot
-      - run: npm run build
-
-      # Concat prisma schema
+      
+       # Concat prisma schema
       - run: npm run prisma:concat_prd
 
       # Generate prisma client
       - run: npm run prisma:generate
+
+      # Build the bot
+      - run: npm run build
 
       # Run ESLint
       - uses: eslint/github-action@v0
