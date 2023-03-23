@@ -13,3 +13,8 @@ model Activity {
   timestamp DateTime @default(now())
   level     Int
 }
+
+model ActivityRole {
+  rid            String @id
+  activityPoints Int
+}
