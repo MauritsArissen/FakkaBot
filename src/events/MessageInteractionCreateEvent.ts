@@ -1,11 +1,14 @@
 import { yellow } from "colorette";
 import { CommandInteraction } from "discord.js";
-import { container } from "tsyringe";
+import { autoInjectable } from "tsyringe";
 import { Bot } from "../client";
 import IEvent from "../interfaces/IEvent";
 import Logger from "../util/Logger";
 
+@autoInjectable()
 class MessageInteractionCreateEvent implements IEvent {
+  constructor(private client?: Bot) {}
+
   getEventType(): string {
     return "interactionCreate";
   }
@@ -14,14 +17,18 @@ class MessageInteractionCreateEvent implements IEvent {
     return false;
   }
 
-  async execute(interaction: CommandInteraction): Promise<void> {
+  async execute(interaction: CommandInteraction): Promise<any> {
     if (!interaction.isCommand()) return;
 
-    const client: Bot = container.resolve(Bot);
-
-    const command = client.commands.get(interaction.commandName);
+    const command = this.client.commands.get(interaction.commandName);
 
     if (!command) return;
+
+    if (!(await command.hasPermissions(interaction)))
+      return await interaction.reply({
+        content: "You do not have permissions to use this command!",
+        ephemeral: true,
+      });
 
     try {
       Logger.command(
