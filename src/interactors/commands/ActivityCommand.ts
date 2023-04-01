@@ -61,6 +61,7 @@ class ActivityCommand implements ICommand {
 
     await interaction.reply({
       embeds: [embed],
+      ephemeral: true,
     });
   }
 }
