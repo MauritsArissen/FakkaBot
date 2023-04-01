@@ -40,17 +40,19 @@ class ActivityRoleAssignEvent implements IEvent {
           _sum: { level: true },
         });
 
-        const time = userActivity._sum.level;
+        const time = userActivity._sum.level || 0;
 
         if (time != null) {
           roles.forEach(async (role) => {
             const riq = await role;
-            if (time >= riq.required) {
-              if (!member.roles.cache.has(riq.role.id))
-                member.roles.add(riq.role);
-            } else {
-              if (member.roles.cache.has(riq.role.id))
-                member.roles.remove(riq.role);
+            if (riq.role != null) {
+              if (time >= riq.required) {
+                if (!member.roles.cache.has(riq.role.id))
+                  member.roles.add(riq.role);
+              } else {
+                if (member.roles.cache.has(riq.role.id))
+                  member.roles.remove(riq.role);
+              }
             }
           });
         }
