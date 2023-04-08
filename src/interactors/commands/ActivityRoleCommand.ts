@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import { autoInjectable } from "tsyringe";
 import ICommand from "../../interfaces/ICommand";
+import TimeHelper from "../../util/TimeHelper";
 
 @autoInjectable()
 class ActivityRoleCommand implements ICommand {
@@ -47,7 +48,9 @@ class ActivityRoleCommand implements ICommand {
               .setRequired(true)
           )
       )
-      .setDefaultMemberPermissions("Administrator") as SlashCommandBuilder;
+      .addSubcommand((command) =>
+        command.setName("list").setDescription("List all activity roles")
+      ) as SlashCommandBuilder;
   }
 
   async hasPermissions(interaction: CommandInteraction): Promise<boolean> {
@@ -79,6 +82,23 @@ class ActivityRoleCommand implements ICommand {
 
       interaction.reply({
         content: `Removed role ${role.name}`,
+        ephemeral: true,
+      });
+    } else if (options.getSubcommand() === "list") {
+      const activityRoles = await this.prisma.activityRole.findMany({
+        orderBy: { activityPoints: "desc" },
+      });
+
+      const activityRoleList = activityRoles
+        .map((activityRole) => {
+          return `<@&${activityRole.rid}>: ${TimeHelper.minuteToTimeFormat(
+            activityRole.activityPoints
+          )}`;
+        })
+        .join("\n");
+
+      interaction.reply({
+        content: `**Activity Roles**\n${activityRoleList}`,
         ephemeral: true,
       });
     }
