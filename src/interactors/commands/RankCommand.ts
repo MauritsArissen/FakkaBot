@@ -21,24 +21,14 @@ class RankCommand implements ICommand {
   }
 
   getSlashCommandBuilder(): SlashCommandBuilder {
-    const slashCommand = new SlashCommandBuilder();
-
-    slashCommand.setName(this.getName());
-    slashCommand.setDescription("Show your or somebody elses ranking");
-
-    slashCommand.addUserOption((options) =>
-      options
-        .setName("user")
-        .setNameLocalizations({
-          nl: "gebruiker",
-        })
-        .setDescription("the user you wanna see the stats of")
-        .setDescriptionLocalizations({
-          nl: "de gebruiker waarvan je de statistieken wilt zien",
-        })
-    );
-
-    return slashCommand;
+    return new SlashCommandBuilder()
+      .setName(this.getName())
+      .setDescription("Show your or somebody elses ranking")
+      .addUserOption((user) =>
+        user
+          .setName("user")
+          .setDescription("The user you wanna see the stats of")
+      ) as SlashCommandBuilder;
   }
 
   async hasPermissions(): Promise<boolean> {

@@ -18,12 +18,11 @@ class ActivityCommand implements ICommand {
   }
 
   getSlashCommandBuilder(): SlashCommandBuilder {
-    const slashCommand = new SlashCommandBuilder();
-
-    slashCommand.setName(this.getName());
-    slashCommand.setDescription("Show your activity over the past 14 days");
-
-    return slashCommand;
+    return new SlashCommandBuilder()
+      .setName(this.getName())
+      .setDescription(
+        "Show your or others activity over the past 14 days"
+      ) as SlashCommandBuilder;
   }
 
   async hasPermissions(): Promise<boolean> {

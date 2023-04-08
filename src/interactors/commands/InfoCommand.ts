@@ -18,12 +18,9 @@ class InfoCommand implements ICommand {
   }
 
   getSlashCommandBuilder(): SlashCommandBuilder {
-    const slashCommand = new SlashCommandBuilder();
-
-    slashCommand.setName(this.getName());
-    slashCommand.setDescription("Get some bot info");
-
-    return slashCommand;
+    return new SlashCommandBuilder()
+      .setName(this.getName())
+      .setDescription("Get some bot info") as SlashCommandBuilder;
   }
 
   async hasPermissions(): Promise<boolean> {
