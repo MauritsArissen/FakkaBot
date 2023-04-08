@@ -2,9 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import {
   SlashCommandBuilder,
   CommandInteraction,
-  SlashCommandSubcommandBuilder,
-  SlashCommandRoleOption,
-  SlashCommandIntegerOption,
   CommandInteractionOptionResolver,
 } from "discord.js";
 import { autoInjectable } from "tsyringe";
@@ -19,36 +16,38 @@ class ActivityRoleCommand implements ICommand {
   }
 
   getSlashCommandBuilder(): SlashCommandBuilder {
-    const slashCommand = new SlashCommandBuilder();
-    const addSubcommand = new SlashCommandSubcommandBuilder();
-    const removeSubcommand = new SlashCommandSubcommandBuilder();
-    const roleSelectOption = new SlashCommandRoleOption();
-    const activityIntegerOption = new SlashCommandIntegerOption();
-
-    slashCommand.setName(this.getName());
-    slashCommand.setDescription("Setup the activity roles");
-
-    addSubcommand.setName("add");
-    addSubcommand.setDescription("Add a new activity role");
-    addSubcommand.addRoleOption(roleSelectOption);
-    addSubcommand.addIntegerOption(activityIntegerOption);
-
-    removeSubcommand.setName("remove");
-    removeSubcommand.setDescription("Remove an activity role");
-    removeSubcommand.addRoleOption(roleSelectOption);
-
-    roleSelectOption.setName("role");
-    roleSelectOption.setDescription("The role to add/remove");
-    roleSelectOption.setRequired(true);
-
-    activityIntegerOption.setName("activity");
-    activityIntegerOption.setDescription("The activity in minutes");
-    activityIntegerOption.setRequired(true);
-
-    slashCommand.addSubcommand(addSubcommand);
-    slashCommand.addSubcommand(removeSubcommand);
-
-    return slashCommand;
+    return new SlashCommandBuilder()
+      .setName(this.getName())
+      .setDescription("Setup the activity roles")
+      .addSubcommand((command) =>
+        command
+          .setName("add")
+          .setDescription("Add a new activity role")
+          .addRoleOption((role) =>
+            role
+              .setName("role")
+              .setDescription("The role to add")
+              .setRequired(true)
+          )
+          .addIntegerOption((activity) =>
+            activity
+              .setName("activitypoints")
+              .setDescription("The activitypoints required in minutes")
+              .setRequired(true)
+          )
+      )
+      .addSubcommand((command) =>
+        command
+          .setName("remove")
+          .setDescription("Remove an existing activity role")
+          .addRoleOption((role) =>
+            role
+              .setName("role")
+              .setDescription("The role to add")
+              .setRequired(true)
+          )
+      )
+      .setDefaultMemberPermissions("Administrator") as SlashCommandBuilder;
   }
 
   async hasPermissions(interaction: CommandInteraction): Promise<boolean> {
@@ -61,16 +60,16 @@ class ActivityRoleCommand implements ICommand {
 
     if (options.getSubcommand() === "add") {
       const role = options.getRole("role");
-      const activity = options.getInteger("activity");
+      const activityPoints = options.getInteger("activitypoints");
 
       await this.prisma.activityRole.upsert({
         where: { rid: role.id },
-        create: { rid: role.id, activityPoints: activity },
-        update: { activityPoints: activity },
+        create: { rid: role.id, activityPoints: activityPoints },
+        update: { activityPoints: activityPoints },
       });
 
       interaction.reply({
-        content: `Added role ${role.name} with activity ${activity}`,
+        content: `Added role ${role.name} with activity ${activityPoints}`,
         ephemeral: true,
       });
     } else if (options.getSubcommand() === "remove") {

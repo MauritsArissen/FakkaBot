@@ -25,12 +25,9 @@ class TopCommand implements ICommand {
   }
 
   getSlashCommandBuilder(): SlashCommandBuilder {
-    const slashCommand = new SlashCommandBuilder();
-
-    slashCommand.setName(this.getName());
-    slashCommand.setDescription("Show the leaderboard");
-
-    return slashCommand;
+    return new SlashCommandBuilder()
+      .setName(this.getName())
+      .setDescription("Show the leaderboard") as SlashCommandBuilder;
   }
 
   async hasPermissions(): Promise<boolean> {
