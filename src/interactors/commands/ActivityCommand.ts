@@ -20,8 +20,9 @@ class ActivityCommand implements ICommand {
   getSlashCommandBuilder(): SlashCommandBuilder {
     return new SlashCommandBuilder()
       .setName(this.getName())
-      .setDescription(
-        "Show your or others activity over the past 14 days"
+      .setDescription("Show your or others activity over the past 14 days")
+      .addUserOption((user) =>
+        user.setName("user").setDescription("The user to show the activity of")
       ) as SlashCommandBuilder;
   }
 
@@ -31,10 +32,11 @@ class ActivityCommand implements ICommand {
 
   async execute(interaction: CommandInteraction): Promise<any> {
     const botUsr = await interaction.guild.members.fetch(this.client.user.id);
+    const usr = interaction.options.getUser("user") || interaction.user;
 
     const userActivity = await this.prisma.activity.aggregate({
       where: {
-        uid: interaction.user.id,
+        uid: usr.id,
         timestamp: { gte: new Date(Date.now() - 12096e5) },
       },
       _sum: { level: true },
@@ -42,7 +44,9 @@ class ActivityCommand implements ICommand {
 
     const embed = new EmbedBuilder()
       .setColor(botUsr.displayHexColor)
-      .setDescription("Your activity tracker")
+      .setDescription(
+        `${usr.id != interaction.user.id ? usr.tag : "Your"} activity tracker`
+      )
       .addFields(
         {
           name: "Past 14 days",
