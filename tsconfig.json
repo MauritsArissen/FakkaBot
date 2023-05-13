@@ -6,7 +6,6 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "module": "commonjs",
     "pretty": true,
@@ -16,8 +15,6 @@
     "allowJs": false,
     "noEmit": false,
     "esModuleInterop": true,
-    "watch": false,
-    "skipLibCheck": true
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules", "tests"]
