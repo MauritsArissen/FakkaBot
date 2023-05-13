@@ -16,6 +16,7 @@
     "allowJs": false,
     "noEmit": false,
     "esModuleInterop": true,
+    "watch": false,
     "skipLibCheck": true
   },
   "include": ["./src/**/*"],
