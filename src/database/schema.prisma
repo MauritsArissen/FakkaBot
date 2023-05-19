@@ -18,3 +18,14 @@ model ActivityRole {
   rid            String @id
   activityPoints Int
 }
+
+model Birthday {
+  uid   String @id
+  month Int
+  day   Int
+}
+
+model Settings {
+  key   String @id
+  value String
+}
