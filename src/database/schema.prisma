@@ -29,3 +29,18 @@ model Settings {
   key   String @id
   value String
 }
+
+model PingRole {
+  rid   String @id
+  name  String
+  emoji String
+  mid   String
+}
+
+model SignUps {
+  uid    String
+  mid    String
+  signed Boolean
+
+  @@id([uid, mid])
+}
