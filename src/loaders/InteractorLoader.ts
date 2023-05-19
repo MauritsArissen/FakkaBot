@@ -4,49 +4,65 @@ import ICommand from "../interfaces/ICommand";
 import ISelectMenu from "../interfaces/ISelectMenu";
 import Logger from "../util/Logger";
 import { autoInjectable, container } from "tsyringe";
-import dependencyInjection from "../config/dependencyInjection";
+import IModal from "../interfaces/IModal";
+import path from "path";
+import { existsSync, readdirSync } from "fs";
 
 @autoInjectable()
 class InteractorLoader {
-  constructor(private client?: Bot) {}
+	constructor(private client?: Bot) {}
 
-  public load(): void {
-    Logger.info("Loading interactions...");
+	public load(): void {
+		Logger.info("Loading interactions...");
 
-    const list = Object.keys(dependencyInjection).map((x) => x);
+		const folderPath = `${__dirname}/../interactors`;
+		const categories = ["commands", "buttons", "selectMenus", "modals"];
 
-    list.forEach(async (category) => {
-      const interactions = dependencyInjection[category];
+		categories.forEach((category) => {
+			const categoryFolderPath = path.join(folderPath, category);
 
-      for (const x of interactions) {
-        const interaction = container.resolve(x);
+			if (existsSync(categoryFolderPath)) {
+				const files = readdirSync(categoryFolderPath);
 
-        switch (category) {
-          case "commands":
-            this.handleCommands(interaction as ICommand);
-            break;
-          case "buttons":
-            this.handleButtons(interaction as IButton);
-            break;
-          case "selectMenus":
-            this.handleSelectMenu(interaction as ISelectMenu);
-            break;
-        }
-      }
-    });
-  }
+				files.forEach(async (file) => {
+					const filePath = path.join(categoryFolderPath, file);
+					const { default: defaultExport } = await import(filePath);
+					const interaction = container.resolve(defaultExport);
 
-  private handleCommands(interaction: ICommand): void {
-    this.client.commands.set(interaction.getName(), interaction);
-  }
+					switch (category) {
+						case "commands":
+							this.handleCommands(interaction as ICommand);
+							break;
+						case "buttons":
+							this.handleButtons(interaction as IButton);
+							break;
+						case "selectMenus":
+							this.handleSelectMenu(interaction as ISelectMenu);
+							break;
+						case "modals":
+							this.handleModal(interaction as IModal);
+							break;
+					}
+				});
+			}
+		});
+	}
 
-  private handleButtons(interaction: IButton): void {
-    this.client.buttons.set(interaction.getCustomId(), interaction);
-  }
+	private handleCommands(interaction: ICommand): void {
+		this.client.commands.set(interaction.getName(), interaction);
+	}
 
-  private handleSelectMenu(interaction: ISelectMenu): void {
-    this.client.selectMenus.set(interaction.getCustomId(), interaction);
-  }
+	private handleButtons(interaction: IButton): void {
+		this.client.buttons.set(interaction.getCustomId(), interaction);
+	}
+
+	private handleSelectMenu(interaction: ISelectMenu): void {
+		this.client.selectMenus.set(interaction.getCustomId(), interaction);
+	}
+
+	private handleModal(interaction: IModal): void {
+		this.client.modals.set(interaction.getCustomId(), interaction);
+	}
 }
 
 export default InteractorLoader;

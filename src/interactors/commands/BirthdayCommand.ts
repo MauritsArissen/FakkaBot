@@ -136,6 +136,12 @@ class BirthdayCommand implements ICommand {
 			}
 
 			case "setchannel": {
+				if (!interaction.memberPermissions.has("Administrator"))
+					return interaction.reply({
+						ephemeral: true,
+						content: "You need to be an administrator to use this command",
+					});
+
 				const channel = options.getChannel("channel");
 
 				await this.prisma.settings.upsert({
