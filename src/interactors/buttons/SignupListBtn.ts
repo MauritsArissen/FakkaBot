@@ -1,13 +1,7 @@
 import { autoInjectable } from "tsyringe";
 import IButton from "../../interfaces/IButton";
 import { PrismaClient } from "@prisma/client";
-import {
-	ActionRowBuilder,
-	ButtonInteraction,
-	ModalBuilder,
-	TextInputBuilder,
-	TextInputStyle,
-} from "discord.js";
+import { ButtonInteraction, EmbedBuilder } from "discord.js";
 
 @autoInjectable()
 class SignupListBtn implements IButton {
@@ -37,51 +31,34 @@ class SignupListBtn implements IButton {
 				.map(async (signUp) => msg.channel.guild.members.fetch(signUp.uid))
 		);
 
-		const modal = new ModalBuilder()
-			.setTitle("Signups")
-			.setCustomId("signupListModal");
+		const signedUpText =
+			signedUp
+				.map(
+					(member) =>
+						`${member.displayName || member.user.username} (${member.user.tag})`
+				)
+				.join("\n") || "No one";
 
-		const signedUpInput = new TextInputBuilder()
-			.setCustomId("signedUpInput")
-			.setLabel("Signed Up")
-			.setPlaceholder(
-				signedUp
-					.map(
-						(member) =>
-							`${member.displayName || member.user.username} (${
-								member.user.tag
-							})`
-					)
-					.join("\n") || "No one"
+		const signedOffText =
+			signedOff
+				.map(
+					(member) =>
+						`${member.displayName || member.user.username} (${member.user.tag})`
+				)
+				.join("\n") || "No one";
+
+		const embed = new EmbedBuilder()
+			.setTitle("Sign up list")
+			.addFields(
+				{ name: "Signed up", value: signedUpText, inline: true },
+				{ name: "Signed off", value: signedOffText, inline: true }
 			)
-			.setStyle(TextInputStyle.Paragraph)
-			.setRequired(false);
+			.setColor("Green");
 
-		const signedOffInput = new TextInputBuilder()
-			.setCustomId("signedOffInput")
-			.setLabel("Signed Off")
-			.setPlaceholder(
-				signedOff
-					.map(
-						(member) =>
-							`${member.displayName || member.user.username} (${
-								member.user.tag
-							})`
-					)
-					.join("\n") || "No one"
-			)
-			.setStyle(TextInputStyle.Paragraph)
-			.setRequired(false);
-
-		const firstActionRow =
-			new ActionRowBuilder<TextInputBuilder>().addComponents(signedUpInput);
-
-		const secondActionRow =
-			new ActionRowBuilder<TextInputBuilder>().addComponents(signedOffInput);
-
-		modal.addComponents(firstActionRow, secondActionRow);
-
-		await interaction.showModal(modal);
+		await interaction.reply({
+			embeds: [embed],
+			ephemeral: true,
+		});
 	}
 }
 
