@@ -73,6 +73,7 @@ class PingRoleSentEvent implements IEvent {
 
 		await message.delete();
 		await message.channel.send({
+			content: pingRole.toString(),
 			embeds: [embed],
 			components: [buttonRow],
 		});
