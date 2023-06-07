@@ -1,6 +1,8 @@
 import { ButtonInteraction } from "discord.js";
 
-export default interface IButton {
-  getCustomId(): string;
-  execute(interaction: ButtonInteraction): Promise<any> | any;
+interface IButton {
+	getCustomId(): string;
+	execute(interaction: ButtonInteraction): Promise<any> | any;
 }
+
+export default IButton;

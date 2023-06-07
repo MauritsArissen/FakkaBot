@@ -23,19 +23,19 @@ class SignupListBtn implements IButton {
 		const signedUp = await Promise.all(
 			signUps
 				.filter((signUp) => signUp.signed)
-				.map(async (signUp) => msg.channel.guild.members.fetch(signUp.uid))
+				.map(async (signUp) => msg.channel.guild.members.fetch(signUp.uid)),
 		);
 		const signedOff = await Promise.all(
 			signUps
 				.filter((signUp) => !signUp.signed)
-				.map(async (signUp) => msg.channel.guild.members.fetch(signUp.uid))
+				.map(async (signUp) => msg.channel.guild.members.fetch(signUp.uid)),
 		);
 
 		const signedUpText =
 			signedUp
 				.map(
 					(member) =>
-						`${member.displayName || member.user.username} (${member.user.tag})`
+						`${member.displayName || member.user.username} (${member.user.tag})`,
 				)
 				.join("\n") || "No one";
 
@@ -43,7 +43,7 @@ class SignupListBtn implements IButton {
 			signedOff
 				.map(
 					(member) =>
-						`${member.displayName || member.user.username} (${member.user.tag})`
+						`${member.displayName || member.user.username} (${member.user.tag})`,
 				)
 				.join("\n") || "No one";
 
@@ -51,7 +51,7 @@ class SignupListBtn implements IButton {
 			.setTitle("Sign up list")
 			.addFields(
 				{ name: "Signed up", value: signedUpText, inline: true },
-				{ name: "Signed off", value: signedOffText, inline: true }
+				{ name: "Signed off", value: signedOffText, inline: true },
 			)
 			.setColor("Green");
 

@@ -28,14 +28,14 @@ class ActivityRoleCommand implements ICommand {
 						role
 							.setName("role")
 							.setDescription("The role to add")
-							.setRequired(true)
+							.setRequired(true),
 					)
 					.addIntegerOption((activity) =>
 						activity
 							.setName("activitypoints")
 							.setDescription("The activitypoints required in minutes")
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			)
 			.addSubcommand((command) =>
 				command
@@ -45,11 +45,11 @@ class ActivityRoleCommand implements ICommand {
 						role
 							.setName("role")
 							.setDescription("The role to add")
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			)
 			.addSubcommand((command) =>
-				command.setName("list").setDescription("List all activity roles")
+				command.setName("list").setDescription("List all activity roles"),
 			) as SlashCommandBuilder;
 	}
 
@@ -99,7 +99,7 @@ class ActivityRoleCommand implements ICommand {
 				const activityRoleList = activityRoles
 					.map((activityRole) => {
 						return `<@&${activityRole.rid}>: ${TimeHelper.minuteToTimeFormat(
-							activityRole.activityPoints
+							activityRole.activityPoints,
 						)}`;
 					})
 					.join("\n");

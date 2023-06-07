@@ -4,13 +4,13 @@ import ISelectMenu from "../../interfaces/ISelectMenu";
 
 @autoInjectable()
 class ExampleSelect implements ISelectMenu {
-  getCustomId(): string {
-    return "exampleSelect";
-  }
+	getCustomId(): string {
+		return "exampleSelect";
+	}
 
-  execute(interaction: StringSelectMenuInteraction): void {
-    interaction.deferUpdate();
-  }
+	execute(interaction: StringSelectMenuInteraction): void {
+		interaction.deferUpdate();
+	}
 }
 
 export default ExampleSelect;

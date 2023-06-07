@@ -24,7 +24,8 @@ class ModalSubmitInteractionEvent implements IEvent {
 
 		try {
 			await modal.execute(interaction);
-		} catch (err) {
+		}
+		catch (err) {
 			Logger.error(err);
 			await interaction.reply({
 				content: "There was an error while processing this select command!",

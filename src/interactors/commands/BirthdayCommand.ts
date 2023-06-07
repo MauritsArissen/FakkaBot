@@ -43,12 +43,12 @@ class BirthdayCommand implements ICommand {
 							.setName("month")
 							.setDescription("Your birth month")
 							.setChoices(
-								...months.map((month, index) => ({
-									name: month,
+								...months.map((_month, index) => ({
+									name: _month,
 									value: index,
-								}))
+								})),
 							)
-							.setRequired(true)
+							.setRequired(true),
 					)
 					.addIntegerOption((day) =>
 						day
@@ -56,14 +56,14 @@ class BirthdayCommand implements ICommand {
 							.setDescription("Your birth date")
 							.setMinValue(1)
 							.setMaxValue(31)
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			)
 			.addSubcommand((command) =>
-				command.setName("remove").setDescription("Remove your birthday")
+				command.setName("remove").setDescription("Remove your birthday"),
 			)
 			.addSubcommand((command) =>
-				command.setName("list").setDescription("List all birthdays")
+				command.setName("list").setDescription("List all birthdays"),
 			)
 			.addSubcommand((command) =>
 				command
@@ -73,8 +73,8 @@ class BirthdayCommand implements ICommand {
 						channel
 							.setName("channel")
 							.setDescription("The channel to announce birthdays in")
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			) as SlashCommandBuilder;
 	}
 
@@ -110,7 +110,8 @@ class BirthdayCommand implements ICommand {
 				});
 
 				interaction.reply({
-					content: `Your birthday has been removed and wont be announced anymore`,
+					content:
+						"Your birthday has been removed and wont be announced anymore",
 					ephemeral: true,
 				});
 				break;
@@ -123,12 +124,12 @@ class BirthdayCommand implements ICommand {
 
 				const birthdayList = birthdays.map(
 					(birthday) =>
-						`<@${birthday.uid}>: \`${months[birthday.month]} ${birthday.day}\``
+						`<@${birthday.uid}>: \`${months[birthday.month]} ${birthday.day}\``,
 				);
 
 				interaction.reply({
 					content: `The birthdays registered in Fakka:\n\n${birthdayList.join(
-						"\n"
+						"\n",
 					)}`,
 					ephemeral: true,
 				});
@@ -136,11 +137,12 @@ class BirthdayCommand implements ICommand {
 			}
 
 			case "setchannel": {
-				if (!interaction.memberPermissions.has("Administrator"))
+				if (!interaction.memberPermissions.has("Administrator")) {
 					return interaction.reply({
 						ephemeral: true,
 						content: "You need to be an administrator to use this command",
 					});
+				}
 
 				const channel = options.getChannel("channel");
 

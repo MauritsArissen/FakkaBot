@@ -32,14 +32,14 @@ class PingRoleCommands implements ICommand {
 						name
 							.setName("name")
 							.setDescription("The name of the ping role")
-							.setRequired(true)
+							.setRequired(true),
 					)
 					.addStringOption((emoji) =>
 						emoji
 							.setName("emoji")
 							.setDescription("The emoji of the ping role")
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			)
 			.addSubcommand((subcommand) =>
 				subcommand
@@ -49,8 +49,8 @@ class PingRoleCommands implements ICommand {
 						role
 							.setName("role")
 							.setDescription("The role to delete")
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			)
 			.addSubcommand((subcommand) =>
 				subcommand
@@ -60,8 +60,8 @@ class PingRoleCommands implements ICommand {
 						channel
 							.setName("channel")
 							.setDescription("The channel to send ping role buttons in")
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 			) as SlashCommandBuilder;
 	}
 
@@ -105,11 +105,11 @@ class PingRoleCommands implements ICommand {
 					.setStyle(ButtonStyle.Secondary);
 
 				const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-					button
+					button,
 				);
 
 				const channel = (await interaction.guild.channels.fetch(
-					setting.value
+					setting.value,
 				)) as TextChannel;
 				const msg = await channel.send({
 					components: [actionRow],
@@ -161,7 +161,7 @@ class PingRoleCommands implements ICommand {
 
 				if (setting) {
 					const channel = (await interaction.guild.channels.fetch(
-						setting.value
+						setting.value,
 					)) as TextChannel;
 					const msg = await channel.messages.fetch(pingRole.mid);
 					if (msg.deletable) await msg.delete();

@@ -68,7 +68,7 @@ class PingRoleSentEvent implements IEvent {
 		const buttonRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
 			yesButton,
 			noButton,
-			listButton
+			listButton,
 		);
 
 		await message.delete();
