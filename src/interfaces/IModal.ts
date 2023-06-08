@@ -1,6 +1,8 @@
 import { ModalSubmitInteraction } from "discord.js";
 
-export default interface IModal {
+interface IModal {
 	getCustomId(): string;
 	execute(interaction: ModalSubmitInteraction): Promise<any> | any;
 }
+
+export default IModal;

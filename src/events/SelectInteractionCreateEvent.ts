@@ -6,32 +6,33 @@ import Logger from "../util/Logger";
 
 @autoInjectable()
 class SelectInteractionCreateEvent implements IEvent {
-  constructor(private client?: Bot) {}
+	constructor(private client?: Bot) {}
 
-  getEventType(): string {
-    return "interactionCreate";
-  }
+	getEventType(): string {
+		return "interactionCreate";
+	}
 
-  getEventOccurance(): boolean {
-    return false;
-  }
+	getEventOccurance(): boolean {
+		return false;
+	}
 
-  async execute(interaction: StringSelectMenuInteraction): Promise<void> {
-    if (!interaction.isStringSelectMenu()) return;
+	async execute(interaction: StringSelectMenuInteraction): Promise<void> {
+		if (!interaction.isStringSelectMenu()) return;
 
-    const select = this.client.selectMenus.get(interaction.customId);
-    if (!select) return;
+		const select = this.client.selectMenus.get(interaction.customId);
+		if (!select) return;
 
-    try {
-      await select.execute(interaction);
-    } catch (err) {
-      Logger.error(err);
-      await interaction.reply({
-        content: "There was an error while processing this select command!",
-        ephemeral: true,
-      });
-    }
-  }
+		try {
+			await select.execute(interaction);
+		}
+		catch (err) {
+			Logger.error(err);
+			await interaction.reply({
+				content: "There was an error while processing this select command!",
+				ephemeral: true,
+			});
+		}
+	}
 }
 
 export default SelectInteractionCreateEvent;

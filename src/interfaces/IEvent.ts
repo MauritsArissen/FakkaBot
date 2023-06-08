@@ -1,5 +1,7 @@
-export default interface IEvent {
-  getEventType(): string;
-  getEventOccurance(): boolean;
-  execute(...args): Promise<void> | void;
+interface IEvent {
+	getEventType(): string;
+	getEventOccurance(): boolean;
+	execute(...args): Promise<void> | void;
 }
+
+export default IEvent;

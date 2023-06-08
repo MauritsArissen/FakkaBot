@@ -28,7 +28,8 @@ class PingRoleAssignBtn implements IButton {
 				content: `You have been assigned the <@&${pingRole.rid}> role.`,
 				ephemeral: true,
 			});
-		} else {
+		}
+		else {
 			await member.roles.remove(pingRole.rid);
 			await interaction.reply({
 				content: `You have been unassigned the <@&${pingRole.rid}> role.`,

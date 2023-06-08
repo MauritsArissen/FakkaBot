@@ -5,9 +5,9 @@ import Logger from "../util/Logger";
 import { green } from "colorette";
 
 export default async () => {
-  Logger.info("STARTING APPLICATION!");
-  await new DatabaseLoader().load();
-  new InteractorLoader().load();
-  await new EventLoader().load();
-  await Logger.info(green("Successfully ran all loaders!"));
+	Logger.info("STARTING APPLICATION!");
+	await new DatabaseLoader().load();
+	new InteractorLoader().load();
+	await new EventLoader().load();
+	await Logger.info(green("Successfully ran all loaders!"));
 };

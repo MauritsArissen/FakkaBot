@@ -6,28 +6,29 @@ import LevelHelper from "../util/LevelHelper";
 
 @autoInjectable()
 class MessageCreateXpEvent implements IEvent {
-  constructor(private levelHelper?: LevelHelper, private client?: Bot) {}
+	constructor(private levelHelper?: LevelHelper, private client?: Bot) {}
 
-  getEventType(): string {
-    return "messageCreate";
-  }
+	getEventType(): string {
+		return "messageCreate";
+	}
 
-  getEventOccurance(): boolean {
-    return false;
-  }
+	getEventOccurance(): boolean {
+		return false;
+	}
 
-  async execute(message: Message): Promise<void> {
-    if (message.author.bot) return;
-    if (
-      !this.client.xpCooldown.has(message.author.id) ||
+	async execute(message: Message): Promise<void> {
+		if (message.author.bot) return;
+		if (
+			!this.client.xpCooldown.has(message.author.id) ||
       this.client.xpCooldown.get(message.author.id) < Date.now()
-    )
-      this.levelHelper.addXp(
-        message.author.id,
-        Math.round(Math.random() * 10 + 15),
-        60
-      );
-  }
+		) {
+			this.levelHelper.addXp(
+				message.author.id,
+				Math.round(Math.random() * 10 + 15),
+				60,
+			);
+		}
+	}
 }
 
 export default MessageCreateXpEvent;

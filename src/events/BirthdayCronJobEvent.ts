@@ -30,7 +30,7 @@ class BirthdayCronJobEvent implements IEvent {
 			birthdays.forEach(async (birthday) => {
 				if (birthdayChannel) {
 					const channel = client.channels.cache.get(
-						birthdayChannel.value
+						birthdayChannel.value,
 					) as TextChannel;
 					const guild = channel.guild;
 					const member = guild.members.cache.get(birthday.uid);

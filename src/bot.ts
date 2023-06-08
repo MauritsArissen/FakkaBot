@@ -5,11 +5,11 @@ import loaders from "./loaders";
 import { container } from "tsyringe";
 
 async function startBot() {
-  const client = container.resolve(Bot);
+	const client = container.resolve(Bot);
 
-  await loaders();
+	await loaders();
 
-  client.login(config.token);
+	client.login(config.token);
 }
 
 startBot();
