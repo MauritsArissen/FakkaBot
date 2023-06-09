@@ -1,12 +1,9 @@
 name: ESLint PR
 
 on:
-  push:
+  pull_request:
     branches:
-      - development
-      - "feature/**"
-      - "fix/**"
-      - "bug/**"
+      - master
 
 jobs:
   build:
