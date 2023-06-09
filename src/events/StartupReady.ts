@@ -15,7 +15,7 @@ class StartupReady implements IEvent {
 	}
 
 	execute(client: Bot): void {
-		Logger.info(`Ready! Logged in as ${yellow(client.user.tag)}`);
+		Logger.info(`Ready! Logged in as ${yellow(client.user.username)}`);
 	}
 }
 

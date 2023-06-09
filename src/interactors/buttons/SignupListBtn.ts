@@ -35,7 +35,7 @@ class SignupListBtn implements IButton {
 			signedUp
 				.map(
 					(member) =>
-						`${member.displayName || member.user.username} (${member.user.tag})`,
+						`${member.displayName || member.user.username} (${member.user.username})`,
 				)
 				.join("\n") || "No one";
 
@@ -43,7 +43,7 @@ class SignupListBtn implements IButton {
 			signedOff
 				.map(
 					(member) =>
-						`${member.displayName || member.user.username} (${member.user.tag})`,
+						`${member.displayName || member.user.username} (${member.user.username})`,
 				)
 				.join("\n") || "No one";
 
