@@ -44,12 +44,3 @@ model SignUps {
 
   @@id([uid, mid])
 }
-
-model DiscordLink {
-  uid         String @id
-  gid         String
-  code        String @unique
-  displayName String
-  hexcolor    String
-  uuid        String
-}
