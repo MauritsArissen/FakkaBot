@@ -24,7 +24,7 @@ class PingRoleSentEvent implements IEvent {
 
 	async execute(message: Message): Promise<void> {
 		if (message.author.bot) return;
-		if (message.content.startsWith("!")) return;
+		if (!message.content.startsWith("!")) return;
 
 		let pingRole: Role;
 
