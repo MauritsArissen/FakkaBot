@@ -19,7 +19,13 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Concat prisma schema
+        run: npm run prisma:concat_prd
+
+      - name: Generate prisma client
+        run: npm run prisma:generate
 
       - name: Build the project
         run: npm run build
