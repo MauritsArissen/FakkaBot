@@ -13,7 +13,7 @@ RUN apt-get update \
 
 # Install dependencies
 RUN npm ci
-RUN npm run primsa:concat_prd
+RUN npm run prisma:concat_prd
 RUN npm run prisma:generate
 
 # Copy only the built application
