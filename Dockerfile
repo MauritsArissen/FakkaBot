@@ -4,8 +4,8 @@ FROM node:20-bullseye
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy contents of the current directory to the working directory
+COPY * ./
 
 # Install build dependencies
 RUN apt-get update \
@@ -13,6 +13,8 @@ RUN apt-get update \
 
 # Install dependencies
 RUN npm ci
+RUN npm run prisma:concat_prd
+RUN npm run prisma:generate
 
 # Copy only the built application
 COPY dist ./dist
