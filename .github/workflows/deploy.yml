@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Get repository name
+        id: repo-name
+        run: echo "::set-output name=repo::$(basename $GITHUB_REPOSITORY)"
+
+      - name: Build Docker image
+        run: docker build -t ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest .
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker image to GitHub Container Registry
+        run: docker push ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest
+
+      # - name: Copy .env file to VPS
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     SSH_HOST: ${{ secrets.SSH_HOST }}
+      #     SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      #     ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+      #   run: |
+      #     echo "$SSH_PRIVATE_KEY" | ssh-add -
+      #     echo "$ENV_FILE_CONTENT" > .env
+      #     scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/.env
+
+      # - name: Deploy Docker image to VPS
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     SSH_HOST: ${{ secrets.SSH_HOST }}
+      #     SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     echo "$SSH_PRIVATE_KEY" | ssh-add -
+      #     ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin'
+      #     ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'docker pull ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest'
+      #     ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'docker stop my-discord-bot || true && docker rm my-discord-bot || true'
+      #     ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'docker run -d --env-file /home/$SSH_USERNAME/.env --restart always --name my-discord-bot -p 3000:3000 ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest'
