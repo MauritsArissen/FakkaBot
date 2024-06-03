@@ -30,15 +30,17 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Get repository name
-        id: repo-name
+      - name: Get repository and owner names
+        id: repo-info
         run: |
           REPO_NAME=$(basename $GITHUB_REPOSITORY)
-          echo "::set-output name=repo::${REPO_NAME,,}"
+          REPO_OWNER=$(dirname $GITHUB_REPOSITORY | cut -d'/' -f1)
+          echo "::set-output name=repo_name::${REPO_NAME,,}"
+          echo "::set-output name=repo_owner::${REPO_OWNER,,}"
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest .
-
+        run: docker build -t ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest .
+        
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
