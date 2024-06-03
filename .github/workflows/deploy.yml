@@ -32,7 +32,9 @@ jobs:
 
       - name: Get repository name
         id: repo-name
-        run: echo "::set-output name=repo::$(basename $GITHUB_REPOSITORY)"
+        run: |
+          REPO_NAME=$(basename $GITHUB_REPOSITORY)
+          echo "::set-output name=repo::${REPO_NAME,,}"
 
       - name: Build Docker image
         run: docker build -t ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest .
