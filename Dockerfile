@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm ci
 RUN npm run primsa:concat_prd
 RUN npm run prisma:generate
 

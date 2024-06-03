@@ -38,9 +38,6 @@ jobs:
           echo "::set-output name=repo_name::${REPO_NAME,,}"
           echo "::set-output name=repo_owner::${REPO_OWNER,,}"
 
-      - name: Verify Dockerfile exists
-        run: ls -la
-
       - name: Build Docker image
         run: docker build -t ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest .
 
@@ -48,7 +45,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest
+        run: docker push ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest
 
       # - name: Copy .env file to VPS
       #   env:
