@@ -47,16 +47,31 @@ jobs:
       - name: Push Docker image to GitHub Container Registry
         run: docker push ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest
 
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Copy .env file to VPS
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
         run: |
-          echo "$SSH_PRIVATE_KEY" | ssh-add -
           echo "$ENV_FILE_CONTENT" > .env
-          scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}/.env
+          scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/mauritsarissen/fakkabot/.env
+
+
+      # - name: Copy .env file to VPS
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     SSH_HOST: ${{ secrets.SSH_HOST }}
+      #     SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      #     ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+      #   run: |
+      #     echo "$SSH_PRIVATE_KEY" | ssh-add -
+      #     echo "$ENV_FILE_CONTENT" > .env
+      #     scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}/.env
 
       # - name: Deploy Docker image to VPS
       #   env:
