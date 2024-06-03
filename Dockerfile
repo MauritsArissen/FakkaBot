@@ -4,8 +4,11 @@ FROM node:20-bullseye
 # Set the working directory
 WORKDIR /app
 
-# Copy contents of the current directory to the working directory
-COPY * ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Copy the source code
+COPY /src ./src
 
 # Install build dependencies
 RUN apt-get update \
