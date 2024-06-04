@@ -62,6 +62,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "mkdir -p /home/$SSH_USERNAME/mauritsarissen/fakkabot"
           scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/mauritsarissen/fakkabot/.env
 
+      - name: Set GitHub Username
+        run: echo "::set-env name=GITHUB_USERNAME::${{ github.actor }}"
+
       - name: Deploy Docker image to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
