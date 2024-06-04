@@ -62,9 +62,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "mkdir -p /home/$SSH_USERNAME/mauritsarissen/fakkabot"
           scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/mauritsarissen/fakkabot/.env
 
-      - name: Set GitHub Username
-        run: echo "::set-env name=GITHUB_USERNAME::${{ github.actor }}"
-
       - name: Deploy Docker image to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -72,7 +69,7 @@ jobs:
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo $GITHUB_TOKEN | ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'docker login ghcr.io -u $GITHUB_USERNAME --password-stdin'
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin'
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest"
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker stop ${{ steps.repo-info.outputs.repo_name }} || true && docker rm ${{ steps.repo-info.outputs.repo_name }} || true"
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker run -d --env-file /home/$SSH_USERNAME/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}/.env --restart always --name ${{ steps.repo-info.outputs.repo_name }} -p 3000:3000 ghcr.io/${{ github.repository_owner }}/${{ steps.repo-name.outputs.repo }}:latest"
