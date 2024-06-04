@@ -34,6 +34,9 @@ jobs:
         id: version
         run: |
           VERSION=$(jq -r .version package.json)
+          echo "VERSION=${VERSION}"
+          echo "${VERSION}" > version.txt
+          cat version.txt
           echo "::set-output name=version::${VERSION}"
 
       - name: Get repository and owner names
@@ -41,9 +44,12 @@ jobs:
         run: |
           REPO_NAME=$(basename $GITHUB_REPOSITORY)
           REPO_OWNER=$(dirname $GITHUB_REPOSITORY | cut -d'/' -f1)
+          echo "REPO_NAME=${REPO_NAME}"
+          echo "REPO_OWNER=${REPO_OWNER}"
           echo "$REPO_NAME" > repo_name.txt
           echo "$REPO_OWNER" > repo_owner.txt
-          echo "${VERSION}" > version.txt
+          cat repo_name.txt
+          cat repo_owner.txt
           echo "::set-output name=repo_name::${REPO_NAME,,}"
           echo "::set-output name=repo_owner::${REPO_OWNER,,}"
 
@@ -114,7 +120,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin'
-          echo "${REPO_OWNER}/${REPO_NAME}:${VERSION}"
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${REPO_OWNER}/${REPO_NAME}:latest"
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${REPO_OWNER}/${REPO_NAME}:${VERSION}"
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker stop ${REPO_NAME} || true && docker rm ${REPO_NAME} || true"
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker run -d --env-file /home/$SSH_USERNAME/${REPO_OWNER}/${REPO_NAME}/.env --restart always --name ${REPO_NAME} ghcr.io/${REPO_OWNER}/${REPO_NAME}:${VERSION}"
