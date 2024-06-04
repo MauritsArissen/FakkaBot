@@ -35,6 +35,8 @@ jobs:
         run: |
           REPO_NAME=$(basename $GITHUB_REPOSITORY)
           REPO_OWNER=$(dirname $GITHUB_REPOSITORY | cut -d'/' -f1)
+          echo "$REPO_NAME" > repo_name.txt
+          echo "$REPO_OWNER" > repo_owner.txt
           echo "::set-output name=repo_name::${REPO_NAME,,}"
           echo "::set-output name=repo_owner::${REPO_OWNER,,}"
 
@@ -46,6 +48,34 @@ jobs:
 
       - name: Push Docker image to GitHub Container Registry
         run: docker push ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest
+
+      - name: Upload repository info
+        uses: actions/upload-artifact@v2
+        with:
+          name: repo-info
+          path: |
+            repo_name.txt
+            repo_owner.txt
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download repository info
+        uses: actions/download-artifact@v2
+        with:
+          name: repo-info
+
+      - name: Set environment variables from artifact
+        run: |
+          REPO_NAME=$(cat repo_name.txt)
+          REPO_OWNER=$(cat repo_owner.txt)
+          echo "REPO_NAME=${REPO_NAME,,}" >> $GITHUB_ENV
+          echo "REPO_OWNER=${REPO_OWNER,,}" >> $GITHUB_ENV
 
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.5.3
@@ -59,17 +89,16 @@ jobs:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
         run: |
           echo "$ENV_FILE_CONTENT" > .env
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "mkdir -p /home/$SSH_USERNAME/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}"
-          scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}/.env
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "mkdir -p /home/$SSH_USERNAME/${REPO_OWNER}/${REPO_NAME}"
+          scp -o StrictHostKeyChecking=no .env $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/${REPO_OWNER}/${REPO_NAME}/.env
 
       - name: Deploy Docker image to VPS
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin'
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest"
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker stop ${{ steps.repo-info.outputs.repo_name }} || true && docker rm ${{ steps.repo-info.outputs.repo_name }} || true"
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker run -d --env-file /home/$SSH_USERNAME/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}/.env --restart always --name ${{ steps.repo-info.outputs.repo_name }} -p 3000:3000 ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest"
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${REPO_OWNER}/${REPO_NAME}:latest"
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker stop ${REPO_NAME} || true && docker rm ${REPO_NAME} || true"
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker run -d --env-file /home/$SSH_USERNAME/${REPO_OWNER}/${REPO_NAME}/.env --restart always --name ${REPO_NAME} ghcr.io/${REPO_OWNER}/${REPO_NAME}:latest"
