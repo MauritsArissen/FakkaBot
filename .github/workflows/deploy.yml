@@ -30,6 +30,12 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "::set-output name=version::${VERSION}"
+
       - name: Get repository and owner names
         id: repo-info
         run: |
@@ -37,17 +43,18 @@ jobs:
           REPO_OWNER=$(dirname $GITHUB_REPOSITORY | cut -d'/' -f1)
           echo "$REPO_NAME" > repo_name.txt
           echo "$REPO_OWNER" > repo_owner.txt
+          echo "${VERSION}" > version.txt
           echo "::set-output name=repo_name::${REPO_NAME,,}"
           echo "::set-output name=repo_owner::${REPO_OWNER,,}"
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest .
+        run: docker build -t ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:${{ steps.version.outputs.version }} .
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:latest
+        run: docker push ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:${{ steps.version.outputs.version }}
 
       - name: Upload repository info
         uses: actions/upload-artifact@v2
@@ -56,6 +63,7 @@ jobs:
           path: |
             repo_name.txt
             repo_owner.txt
+            version.txt
 
   deploy:
     needs: build
@@ -74,8 +82,10 @@ jobs:
         run: |
           REPO_NAME=$(cat repo_name.txt)
           REPO_OWNER=$(cat repo_owner.txt)
+          VERSION=$(cat version.txt)
           echo "REPO_NAME=${REPO_NAME,,}" >> $GITHUB_ENV
           echo "REPO_OWNER=${REPO_OWNER,,}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.5.3
@@ -99,6 +109,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST 'echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin'
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${REPO_OWNER}/${REPO_NAME}:latest"
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker pull ghcr.io/${REPO_OWNER}/${REPO_NAME}:${VERSION}"
           ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker stop ${REPO_NAME} || true && docker rm ${REPO_NAME} || true"
-          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker run -d --env-file /home/$SSH_USERNAME/${REPO_OWNER}/${REPO_NAME}/.env --restart always --name ${REPO_NAME} ghcr.io/${REPO_OWNER}/${REPO_NAME}:latest"
+          ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "docker run -d --env-file /home/$SSH_USERNAME/${REPO_OWNER}/${REPO_NAME}/.env --restart always --name ${REPO_NAME} ghcr.io/${REPO_OWNER}/${REPO_NAME}:${VERSION}"
