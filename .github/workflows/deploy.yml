@@ -3,7 +3,11 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - feature/fix-deployment
+      - master
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
 
 jobs:
   build:
