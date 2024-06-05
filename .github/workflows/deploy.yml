@@ -35,18 +35,21 @@ jobs:
         run: npm run build
 
       - name: Get version from package.json
-        id: version
+        id: set-version
         run: |
           VERSION=$(jq -r .version package.json)
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "${VERSION}" > version.txt
 
       - name: Get repository and owner names
-        id: repo-info
+        id: set-repo-info
         run: |
           REPO_NAME=$(basename $GITHUB_REPOSITORY)
           REPO_OWNER=$(dirname $GITHUB_REPOSITORY | cut -d'/' -f1)
           echo "REPO_NAME=${REPO_NAME,,}" >> $GITHUB_ENV
           echo "REPO_OWNER=${REPO_OWNER,,}" >> $GITHUB_ENV
+          echo "REPO_NAME=${REPO_NAME,,}" > repo_info.txt
+          echo "REPO_OWNER=${REPO_OWNER,,}" >> repo_info.txt
 
       - name: Build and tag Docker image
         run: |
@@ -62,6 +65,14 @@ jobs:
       - name: Push Docker image with latest tag
         run: docker push ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}:latest
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-info
+          path: |
+            version.txt
+            repo_info.txt
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -70,11 +81,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set environment variables from build job
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: repo-info
+
+      - name: Set environment variables from artifact
         run: |
-          echo "REPO_NAME=${{ needs.build.outputs.REPO_NAME }}" >> $GITHUB_ENV
-          echo "REPO_OWNER=${{ needs.build.outputs.REPO_OWNER }}" >> $GITHUB_ENV
-          echo "VERSION=${{ needs.build.outputs.VERSION }}" >> $GITHUB_ENV
+          VERSION=$(cat version.txt)
+          REPO_NAME=$(grep -m 1 REPO_NAME repo_info.txt | cut -d '=' -f 2)
+          REPO_OWNER=$(grep -m 1 REPO_OWNER repo_info.txt | cut -d '=' -f 2)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "REPO_NAME=${REPO_NAME}" >> $GITHUB_ENV
+          echo "REPO_OWNER=${REPO_OWNER}" >> $GITHUB_ENV
 
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.0
