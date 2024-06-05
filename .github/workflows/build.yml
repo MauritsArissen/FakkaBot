@@ -12,10 +12,10 @@ jobs:
 
     steps:
       # Check out the repository
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       # Install Node.js
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -32,7 +32,7 @@ jobs:
       - run: npm run build
 
       # Run ESLint
-      - uses: eslint/github-action@v0
+      - run: eslint . --ext .js,.jsx,.ts,.tsx
 
       - name: Build Docker image
         run: |
