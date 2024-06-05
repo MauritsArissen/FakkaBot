@@ -18,32 +18,34 @@ jobs:
       run: |
         git fetch origin ${{ github.event.pull_request.base.ref }}:base_branch
         if git diff --name-only base_branch ${{ github.sha }} | grep -q -e '^src/' -e 'package.json'; then
-          echo "::set-output name=changed::true"
+          echo "changed=true" >> $GITHUB_ENV
         else
-          echo "::set-output name=changed::false"
+          echo "changed=false" >> $GITHUB_ENV
         fi
       shell: bash
 
     - name: Get current package version
       id: current_version
-      if: steps.src_changes.outputs.changed == 'true'
+      if: env.changed == 'true'
       run: |
-        echo "::set-output name=version::$(jq -r .version package.json)"
+        VERSION=$(jq -r .version package.json)
+        echo "version=${VERSION}" >> $GITHUB_ENV
       shell: bash
 
     - name: Get base branch package version
       id: base_version
-      if: steps.src_changes.outputs.changed == 'true'
+      if: env.changed == 'true'
       run: |
         git fetch origin ${{ github.event.pull_request.base.ref }}:base_branch
         git checkout base_branch
-        echo "::set-output name=version::$(jq -r .version package.json)"
+        BASE_VERSION=$(jq -r .version package.json)
+        echo "base_version=${BASE_VERSION}" >> $GITHUB_ENV
       shell: bash
 
     - name: Compare versions
-      if: steps.src_changes.outputs.changed == 'true'
+      if: env.changed == 'true'
       run: |
-        if [ "${{ steps.current_version.outputs.version }}" == "${{ steps.base_version.outputs.version }}" ]; then
+        if [ "${{ env.version }}" == "${{ env.base_version }}" ]; then
           echo "Version in package.json has not been updated"
           exit 1
         else
