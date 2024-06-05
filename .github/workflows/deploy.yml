@@ -15,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -63,7 +63,7 @@ jobs:
         run: docker push ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}:latest
 
       - name: Upload repository info
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: repo-info
           path: |
@@ -77,10 +77,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download repository info
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: repo-info
 
@@ -94,7 +94,7 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Start SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
+        uses: webfactory/ssh-agent@v0.9
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
