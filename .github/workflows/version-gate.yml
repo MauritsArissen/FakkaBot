@@ -1,14 +1,9 @@
 name: Version Gate
 
-# on:
-#   pull_request:
-#     branches:
-#       - master
-
 on:
-  push:
+  pull_request:
     branches:
-      - feature/version-gate
+      - master
 
 jobs:
   check_version:
