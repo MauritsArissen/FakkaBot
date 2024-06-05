@@ -32,7 +32,7 @@ jobs:
       - run: npm run build
 
       # Run ESLint
-      - run: eslint . --ext .js,.jsx,.ts,.tsx
+      - uses: eslint/github-action@v0
 
       - name: Build Docker image
         run: |
