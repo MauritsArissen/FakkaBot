@@ -13,14 +13,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Check if /src folder has changes
+      id: src_changes
+      run: |
+        git fetch origin ${{ github.event.pull_request.base.ref }}:base_branch
+        if git diff --name-only base_branch ${{ github.sha }} | grep -q '^src/'; then
+          echo "::set-output name=changed::true"
+        else
+          echo "::set-output name=changed::false"
+        fi
+      shell: bash
+
     - name: Get current package version
       id: current_version
+      if: steps.src_changes.outputs.changed == 'true'
       run: |
         echo "::set-output name=version::$(jq -r .version package.json)"
       shell: bash
 
     - name: Get base branch package version
       id: base_version
+      if: steps.src_changes.outputs.changed == 'true'
       run: |
         git fetch origin ${{ github.event.pull_request.base.ref }}:base_branch
         git checkout base_branch
@@ -28,7 +41,7 @@ jobs:
       shell: bash
 
     - name: Compare versions
-      id: compare_versions
+      if: steps.src_changes.outputs.changed == 'true'
       run: |
         if [ "${{ steps.current_version.outputs.version }}" == "${{ steps.base_version.outputs.version }}" ]; then
           echo "Version in package.json has not been updated"
