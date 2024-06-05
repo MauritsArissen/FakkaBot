@@ -36,5 +36,5 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ steps.repo-info.outputs.repo_owner }}/${{ steps.repo-info.outputs.repo_name }}:${{ steps.version.outputs.version }} .
+          docker build -t build-image .
 
