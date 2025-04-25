@@ -6,9 +6,7 @@ import { container } from "tsyringe";
 
 async function startBot() {
 	const client = container.resolve(Bot);
-
 	await loaders();
-
 	client.login(config.token);
 }
 
